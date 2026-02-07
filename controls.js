@@ -19,6 +19,11 @@ const ControlsManager = {
     helpPanel: null,
     closeHelpButton: null,
     
+    // Progress detail elements
+    progressStats: null,
+    progressDetailPanel: null,
+    closeProgressDetailButton: null,
+    
     // Text input elements
     textInputPanel: null,
     closeTextInputButton: null,
@@ -52,6 +57,11 @@ const ControlsManager = {
         this.helpPanel = document.getElementById('helpPanel');
         this.closeHelpButton = document.getElementById('closeHelp');
         
+        // Progress detail
+        this.progressStats = document.getElementById('progressStats');
+        this.progressDetailPanel = document.getElementById('progressDetailPanel');
+        this.closeProgressDetailButton = document.getElementById('closeProgressDetail');
+        
         // Text input
         this.textInputPanel = document.getElementById('textInputPanel');
         this.closeTextInputButton = document.getElementById('closeTextInput');
@@ -77,6 +87,10 @@ const ControlsManager = {
         // Help
         this.addClickAndTouchListener(this.helpIcon, () => this.openHelp());
         this.addClickAndTouchListener(this.closeHelpButton, () => this.closeHelp());
+
+        // Progress detail
+        this.addClickAndTouchListener(this.progressStats, () => this.openProgressDetail());
+        this.addClickAndTouchListener(this.closeProgressDetailButton, () => this.closeProgressDetail());
 
         // Text input
         this.addClickAndTouchListener(this.loadTextPrompt, () => this.openTextInput());
@@ -406,6 +420,15 @@ const ControlsManager = {
                     this.closeHelp();
                 }
             }
+
+            // Check if progress detail panel is open
+            if (this.progressDetailPanel.classList.contains('visible')) {
+                // If click is outside progress detail panel and not on progress stats, close it
+                if (!this.progressDetailPanel.contains(event.target) && 
+                    !this.progressStats.contains(event.target)) {
+                    this.closeProgressDetail();
+                }
+            }
         });
 
         // Also handle touch events for mobile
@@ -427,6 +450,37 @@ const ControlsManager = {
                     this.closeHelp();
                 }
             }
+
+            // Check if progress detail panel is open
+            if (this.progressDetailPanel.classList.contains('visible')) {
+                // If touch is outside progress detail panel and not on progress stats, close it
+                if (!this.progressDetailPanel.contains(event.target) && 
+                    !this.progressStats.contains(event.target)) {
+                    this.closeProgressDetail();
+                }
+            }
         });
+    },
+
+    // Open progress detail panel
+    openProgressDetail: function() {
+        if (!ReaderEngine.currentProgressDetails) {
+            return;
+        }
+
+        // Populate detail panel with current progress info
+        document.getElementById('progressDetailLine1').textContent = ReaderEngine.currentProgressDetails.wordText;
+        document.getElementById('progressDetailLine2').textContent = ReaderEngine.currentProgressDetails.percentText;
+        document.getElementById('progressDetailLine3').textContent = ReaderEngine.currentProgressDetails.timeText;
+
+        // Show panel
+        this.progressDetailPanel.classList.remove('hidden');
+        this.progressDetailPanel.classList.add('visible');
+    },
+
+    // Close progress detail panel
+    closeProgressDetail: function() {
+        this.progressDetailPanel.classList.remove('visible');
+        this.progressDetailPanel.classList.add('hidden');
     }
 };

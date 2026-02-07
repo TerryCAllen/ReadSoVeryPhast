@@ -477,16 +477,69 @@ body {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    font-size: 14px;
+    font-size: 11px;
     color: var(--color-text-dim);
-    padding: 8px 12px;
+    padding: 4px 6px;
     background-color: var(--color-bg);
     text-align: right;
-    line-height: 1.6;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.progress-stats:hover {
+    color: var(--color-text);
 }
 
 .progress-stats.hidden {
     display: none;
+}
+
+/* Progress Detail Panel */
+.progress-detail-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    z-index: 998;
+    display: none;
+}
+
+.progress-detail-panel.visible {
+    display: block;
+}
+
+.progress-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.progress-detail-header h2 {
+    font-size: 24px;
+    color: var(--color-text);
+}
+
+.progress-detail-content {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.progress-detail-line {
+    font-size: 18px;
+    color: var(--color-text);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.progress-detail-line:last-child {
+    margin-bottom: 0;
 }
 
 /* No Text Message */
@@ -572,30 +625,13 @@ body {
         font-size: 36px;
     }
     
-    /* Compact progress stats for mobile */
+    /* Smaller font on mobile */
     .speed-display {
         font-size: 14px;
         padding: 4px 8px;
         bottom: 5px;
         left: 5px;
     }
-    
-    .progress-stats {
-        font-size: 11px;
-        padding: 4px 6px;
-        bottom: 5px;
-        right: 5px;
-        line-height: 1.2;
-    }
-    
-    .progress-line3 {
-        display: block;
-    }
-}
-
-/* Hide third line on desktop (only show on mobile) */
-.progress-line3 {
-    display: none;
 }
 
 /* Prevent text selection on touch devices */

@@ -511,36 +511,44 @@ const ReaderEngine = {
         const formattedCurrent = currentWordNumber.toLocaleString();
         const formattedTotal = totalWords.toLocaleString();
 
-        // Detect mobile screen
-        const isMobile = window.innerWidth <= 768;
-
-        if (isMobile) {
-            // Compact 3-line format for mobile
-            this.progressLine1Element.textContent = `${formattedCurrent}/${formattedTotal}`;
-            this.progressLine2Element.textContent = `${percentComplete}%`;
-            
-            // Shorten time for mobile display
-            let shortTime = timeRemainingText;
-            if (minutesRemaining < 1) {
-                shortTime = '<1min';
-            } else if (minutesRemaining < 60) {
-                const minutes = Math.ceil(minutesRemaining);
-                shortTime = `${minutes}min`;
-            } else {
-                const hours = Math.floor(minutesRemaining / 60);
-                const minutes = Math.ceil(minutesRemaining % 60);
-                shortTime = `${hours}h`;
-                if (minutes > 0) {
-                    shortTime += ` ${minutes}m`;
-                }
-            }
-            this.progressLine3Element.textContent = shortTime;
+        // Compact 3-line format for all devices
+        this.progressLine1Element.textContent = `${formattedCurrent}/${formattedTotal}`;
+        this.progressLine2Element.textContent = `${percentComplete}%`;
+        
+        // Shorten time for display
+        let shortTime = timeRemainingText;
+        if (minutesRemaining < 1) {
+            shortTime = '<1 min';
+        } else if (minutesRemaining < 60) {
+            const minutes = Math.ceil(minutesRemaining);
+            shortTime = `${minutes} min`;
         } else {
-            // Desktop format (full details)
-            this.progressLine1Element.textContent = `Word ${formattedCurrent} of ${formattedTotal} (${percentComplete}%)`;
-            this.progressLine2Element.textContent = `Est. Time: ${timeRemainingText}`;
-            this.progressLine3Element.textContent = ''; // Clear third line on desktop
+            const hours = Math.floor(minutesRemaining / 60);
+            const minutes = Math.ceil(minutesRemaining % 60);
+            shortTime = `${hours}h`;
+            if (minutes > 0) {
+                shortTime += ` ${minutes}m`;
+            }
         }
+        this.progressLine3Element.textContent = shortTime;
+        
+        // Store detailed info for the detail panel
+        // Format time for detail view (shorter format)
+        let detailTime = timeRemainingText;
+        if (minutesRemaining >= 60) {
+            const hours = Math.floor(minutesRemaining / 60);
+            const minutes = Math.ceil(minutesRemaining % 60);
+            detailTime = `${hours} hour${hours === 1 ? '' : 's'}`;
+            if (minutes > 0) {
+                detailTime += `, ${minutes} min`;
+            }
+        }
+        
+        this.currentProgressDetails = {
+            wordText: `Word ${formattedCurrent} of ${formattedTotal}`,
+            percentText: `${percentComplete}% Complete`,
+            timeText: `${detailTime} remaining`
+        };
 
         // Show the stats
         this.progressStatsElement.classList.remove('hidden');
