@@ -14,6 +14,11 @@ const ControlsManager = {
     settingsPanel: null,
     closeSettingsButton: null,
     
+    // Help elements
+    helpIcon: null,
+    helpPanel: null,
+    closeHelpButton: null,
+    
     // Text input elements
     textInputPanel: null,
     closeTextInputButton: null,
@@ -42,6 +47,11 @@ const ControlsManager = {
         this.settingsPanel = document.getElementById('settingsPanel');
         this.closeSettingsButton = document.getElementById('closeSettings');
         
+        // Help
+        this.helpIcon = document.getElementById('helpIcon');
+        this.helpPanel = document.getElementById('helpPanel');
+        this.closeHelpButton = document.getElementById('closeHelp');
+        
         // Text input
         this.textInputPanel = document.getElementById('textInputPanel');
         this.closeTextInputButton = document.getElementById('closeTextInput');
@@ -63,6 +73,10 @@ const ControlsManager = {
         // Settings
         this.settingsIcon.addEventListener('click', () => this.openSettings());
         this.closeSettingsButton.addEventListener('click', () => this.closeSettings());
+
+        // Help
+        this.helpIcon.addEventListener('click', () => this.openHelp());
+        this.closeHelpButton.addEventListener('click', () => this.closeHelp());
 
         // Text input
         this.loadTextPrompt.addEventListener('click', () => this.openTextInput());
@@ -194,6 +208,9 @@ const ControlsManager = {
         // Load current settings into form using SettingsManager
         SettingsManager.loadSettingsIntoUI();
         
+        // Hide hamburger icon
+        this.hideHamburgerIcon();
+        
         // Show panel
         this.settingsPanel.classList.remove('hidden');
         this.settingsPanel.classList.add('visible');
@@ -203,6 +220,9 @@ const ControlsManager = {
     closeSettings: function() {
         this.settingsPanel.classList.remove('visible');
         this.settingsPanel.classList.add('hidden');
+        
+        // Show hamburger icon again
+        this.showHamburgerIcon();
     },
 
     // Open text input panel
@@ -255,6 +275,9 @@ const ControlsManager = {
             
             // Show paragraph display (paused state)
             ReaderEngine.displayParagraph();
+            
+            // Show help icon (text loaded in paused state)
+            this.showHelpIcon();
         } else {
             alert('Failed to load text. Please try again.');
         }
@@ -283,5 +306,45 @@ const ControlsManager = {
     // Hide no text message
     hideNoTextMessage: function() {
         this.noTextMessage.classList.add('hidden');
+    },
+
+    // Open help panel
+    openHelp: function() {
+        this.helpPanel.classList.remove('hidden');
+        this.helpPanel.classList.add('visible');
+    },
+
+    // Close help panel
+    closeHelp: function() {
+        this.helpPanel.classList.remove('visible');
+        this.helpPanel.classList.add('hidden');
+    },
+
+    // Show help icon (only when paused)
+    showHelpIcon: function() {
+        if (this.helpIcon) {
+            this.helpIcon.classList.remove('hidden');
+        }
+    },
+
+    // Hide help icon (when reading)
+    hideHelpIcon: function() {
+        if (this.helpIcon) {
+            this.helpIcon.classList.add('hidden');
+        }
+    },
+
+    // Hide hamburger menu (when settings panel is open)
+    hideHamburgerIcon: function() {
+        if (this.settingsIcon) {
+            this.settingsIcon.classList.add('hidden-by-panel');
+        }
+    },
+
+    // Show hamburger menu (when settings panel closes)
+    showHamburgerIcon: function() {
+        if (this.settingsIcon) {
+            this.settingsIcon.classList.remove('hidden-by-panel');
+        }
     }
 };

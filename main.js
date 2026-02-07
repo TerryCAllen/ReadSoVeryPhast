@@ -60,6 +60,9 @@ const SpeedReaderApp = {
                 
                 // Display paragraph (app starts in paused state)
                 ReaderEngine.displayParagraph();
+                
+                // Show help icon (app starts paused)
+                ControlsManager.showHelpIcon();
             } else {
                 console.error('Failed to load saved text');
                 this.showNoContentState();

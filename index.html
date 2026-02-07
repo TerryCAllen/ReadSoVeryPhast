@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Help Icon (top-left, only when paused) -->
+    <div id="helpIcon" class="help-icon hidden">?</div>
+
     <!-- Settings Menu Icon -->
     <div id="settingsIcon" class="settings-icon">☰</div>
 
@@ -42,6 +45,38 @@
             </div>
             <button id="saveSettings" class="save-button">Save Settings</button>
             <button id="loadNewTextButton" class="load-new-text-button">Load New Text</button>
+        </div>
+    </div>
+
+    <!-- Help Panel (hidden by default) -->
+    <div id="helpPanel" class="help-panel hidden">
+        <div class="help-header">
+            <h2>How to Use</h2>
+            <button id="closeHelp" class="close-button">×</button>
+        </div>
+        <div class="help-content">
+            <h2 class="help-title"><span class="rsvp-letter">R</span>ead <span class="rsvp-letter">S</span>o <span class="rsvp-letter">V</span>ery <span class="rsvp-letter">P</span>hast</h2>
+            
+            <h3>Getting Started</h3>
+            <p>• Click "Load Text" to paste your content<br>
+            • Press Play (center) or Space to start reading</p>
+            
+            <h3>Touch/Click Controls</h3>
+            <p>• <strong>Center:</strong> Play/Pause<br>
+            • <strong>Up:</strong> Speed up (reading) / Scroll up (paused)<br>
+            • <strong>Down:</strong> Slow down (reading) / Scroll down (paused)<br>
+            • <strong>Left:</strong> Jump to sentence start / Previous sentence<br>
+            • <strong>Right:</strong> Next sentence</p>
+            
+            <h3>Keyboard Shortcuts</h3>
+            <p>• <strong>Space:</strong> Play/Pause<br>
+            • <strong>↑:</strong> Increase speed<br>
+            • <strong>↓:</strong> Decrease speed<br>
+            • <strong>←:</strong> Previous/restart sentence<br>
+            • <strong>→:</strong> Next sentence</p>
+            
+            <p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--color-text-dim);">
+            Click <strong>☰</strong> for settings (WPM, theme, font size)</p>
         </div>
     </div>
 

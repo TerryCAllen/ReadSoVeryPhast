@@ -83,6 +83,9 @@ const ReaderEngine = {
         // Hide progress stats
         this.hideProgressStats();
         
+        // Hide help icon
+        ControlsManager.hideHelpIcon();
+        
         // Update play/pause icon
         this.playPauseIconElement.textContent = '⏸';
         
@@ -109,6 +112,9 @@ const ReaderEngine = {
         
         // Show progress stats
         this.showProgressStats();
+        
+        // Show help icon
+        ControlsManager.showHelpIcon();
         
         // Save position
         this.saveCurrentPosition();
