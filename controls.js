@@ -227,8 +227,9 @@ const ControlsManager = {
         // Load current settings into form using SettingsManager
         SettingsManager.loadSettingsIntoUI();
         
-        // Hide hamburger icon
+        // Hide both hamburger and help icons
         this.hideHamburgerIcon();
+        this.hideHelpIcon();
         
         // Show panel
         this.settingsPanel.classList.remove('hidden');
@@ -240,8 +241,11 @@ const ControlsManager = {
         this.settingsPanel.classList.remove('visible');
         this.settingsPanel.classList.add('hidden');
         
-        // Show hamburger icon again
+        // Show both icons again (help icon only if paused)
         this.showHamburgerIcon();
+        if (ReaderEngine.isPaused) {
+            this.showHelpIcon();
+        }
     },
 
     // Open text input panel
@@ -334,6 +338,10 @@ const ControlsManager = {
             this.closeSettings();
         }
         
+        // Hide both hamburger and help icons
+        this.hideHamburgerIcon();
+        this.hideHelpIcon();
+        
         this.helpPanel.classList.remove('hidden');
         this.helpPanel.classList.add('visible');
     },
@@ -342,6 +350,12 @@ const ControlsManager = {
     closeHelp: function() {
         this.helpPanel.classList.remove('visible');
         this.helpPanel.classList.add('hidden');
+        
+        // Show both icons again (help icon only if paused)
+        this.showHamburgerIcon();
+        if (ReaderEngine.isPaused) {
+            this.showHelpIcon();
+        }
     },
 
     // Show help icon (only when paused)

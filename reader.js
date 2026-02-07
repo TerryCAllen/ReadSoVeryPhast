@@ -87,7 +87,7 @@ const ReaderEngine = {
         ControlsManager.hideHelpIcon();
         
         // Update play/pause icon
-        this.playPauseIconElement.textContent = '⏸';
+        this.playPauseIconElement.textContent = '❚❚';
         
         // Start the reading timer
         this.scheduleNextWord();
