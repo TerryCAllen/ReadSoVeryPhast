@@ -2,6 +2,8 @@
 
 A minimalist, no-dependency speed reading web application that displays text one word at a time to help you read faster and with better focus.
 
+**🚀 [Try it now!](https://terrycallen.github.io/ReadSoVeryPhast/)**
+
 ![Read So Very Phast](screenshot-placeholder.png)
 
 ## Features

@@ -63,31 +63,45 @@ const ControlsManager = {
 
     // Attach all event listeners
     attachEventListeners: function() {
-        // Control buttons
-        this.controlCenter.addEventListener('click', () => this.handleCenterControl());
-        this.controlUp.addEventListener('click', () => this.handleUpControl());
-        this.controlDown.addEventListener('click', () => this.handleDownControl());
-        this.controlLeft.addEventListener('click', () => this.handleLeftControl());
-        this.controlRight.addEventListener('click', () => this.handleRightControl());
+        // Control buttons - use both click and touchend for mobile support
+        this.addClickAndTouchListener(this.controlCenter, () => this.handleCenterControl());
+        this.addClickAndTouchListener(this.controlUp, () => this.handleUpControl());
+        this.addClickAndTouchListener(this.controlDown, () => this.handleDownControl());
+        this.addClickAndTouchListener(this.controlLeft, () => this.handleLeftControl());
+        this.addClickAndTouchListener(this.controlRight, () => this.handleRightControl());
 
         // Settings
-        this.settingsIcon.addEventListener('click', () => this.openSettings());
-        this.closeSettingsButton.addEventListener('click', () => this.closeSettings());
+        this.addClickAndTouchListener(this.settingsIcon, () => this.openSettings());
+        this.addClickAndTouchListener(this.closeSettingsButton, () => this.closeSettings());
 
         // Help
-        this.helpIcon.addEventListener('click', () => this.openHelp());
-        this.closeHelpButton.addEventListener('click', () => this.closeHelp());
+        this.addClickAndTouchListener(this.helpIcon, () => this.openHelp());
+        this.addClickAndTouchListener(this.closeHelpButton, () => this.closeHelp());
 
         // Text input
-        this.loadTextPrompt.addEventListener('click', () => this.openTextInput());
-        this.closeTextInputButton.addEventListener('click', () => this.closeTextInput());
-        this.loadTextButton.addEventListener('click', () => this.handleLoadText());
+        this.addClickAndTouchListener(this.loadTextPrompt, () => this.openTextInput());
+        this.addClickAndTouchListener(this.closeTextInputButton, () => this.closeTextInput());
+        this.addClickAndTouchListener(this.loadTextButton, () => this.handleLoadText());
 
         // Keyboard controls
         this.attachKeyboardControls();
 
+        // Click outside to close panels
+        this.attachClickOutsideListeners();
+
         // Prevent default touch behaviors
         this.preventDefaultTouchBehavior();
+    },
+
+    // Add both click and touch listeners to support desktop and mobile
+    addClickAndTouchListener: function(element, handler) {
+        if (!element) return;
+        
+        element.addEventListener('click', handler);
+        element.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            handler();
+        }, { passive: false });
     },
 
     // Attach keyboard event listeners
@@ -205,6 +219,11 @@ const ControlsManager = {
 
     // Open settings panel
     openSettings: function() {
+        // Close help panel if open
+        if (this.helpPanel.classList.contains('visible')) {
+            this.closeHelp();
+        }
+        
         // Load current settings into form using SettingsManager
         SettingsManager.loadSettingsIntoUI();
         
@@ -310,6 +329,11 @@ const ControlsManager = {
 
     // Open help panel
     openHelp: function() {
+        // Close settings panel if open
+        if (this.settingsPanel.classList.contains('visible')) {
+            this.closeSettings();
+        }
+        
         this.helpPanel.classList.remove('hidden');
         this.helpPanel.classList.add('visible');
     },
@@ -346,5 +370,49 @@ const ControlsManager = {
         if (this.settingsIcon) {
             this.settingsIcon.classList.remove('hidden-by-panel');
         }
+    },
+
+    // Attach click outside listeners to close panels
+    attachClickOutsideListeners: function() {
+        document.addEventListener('click', (event) => {
+            // Check if settings panel is open
+            if (this.settingsPanel.classList.contains('visible')) {
+                // If click is outside settings panel and not on settings icon, close it
+                if (!this.settingsPanel.contains(event.target) && 
+                    !this.settingsIcon.contains(event.target)) {
+                    this.closeSettings();
+                }
+            }
+
+            // Check if help panel is open
+            if (this.helpPanel.classList.contains('visible')) {
+                // If click is outside help panel and not on help icon, close it
+                if (!this.helpPanel.contains(event.target) && 
+                    !this.helpIcon.contains(event.target)) {
+                    this.closeHelp();
+                }
+            }
+        });
+
+        // Also handle touch events for mobile
+        document.addEventListener('touchend', (event) => {
+            // Check if settings panel is open
+            if (this.settingsPanel.classList.contains('visible')) {
+                // If touch is outside settings panel and not on settings icon, close it
+                if (!this.settingsPanel.contains(event.target) && 
+                    !this.settingsIcon.contains(event.target)) {
+                    this.closeSettings();
+                }
+            }
+
+            // Check if help panel is open
+            if (this.helpPanel.classList.contains('visible')) {
+                // If touch is outside help panel and not on help icon, close it
+                if (!this.helpPanel.contains(event.target) && 
+                    !this.helpIcon.contains(event.target)) {
+                    this.closeHelp();
+                }
+            }
+        });
     }
 };
