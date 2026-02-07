@@ -26,6 +26,7 @@ const ReaderEngine = {
     progressStatsElement: null,
     progressLine1Element: null,
     progressLine2Element: null,
+    progressLine3Element: null,
 
     // Initialize the reading engine
     initialize: function(settings) {
@@ -41,6 +42,7 @@ const ReaderEngine = {
         this.progressStatsElement = document.getElementById('progressStats');
         this.progressLine1Element = document.getElementById('progressLine1');
         this.progressLine2Element = document.getElementById('progressLine2');
+        this.progressLine3Element = document.getElementById('progressLine3');
         
         this.updateSpeedDisplay();
     },
@@ -448,12 +450,18 @@ const ReaderEngine = {
 
     // Save settings
     saveSettings: function() {
-        const settings = {
-            wordsPerMinute: this.wordsPerMinute,
-            wordsPerMinuteIncrement: this.wordsPerMinuteIncrement
-        };
-        
-        StorageManager.saveSettings(settings);
+        // Update the full settings object with current WPM
+        if (SettingsManager && SettingsManager.currentSettings) {
+            SettingsManager.currentSettings.wordsPerMinute = this.wordsPerMinute;
+            StorageManager.saveSettings(SettingsManager.currentSettings);
+        } else {
+            // Fallback if SettingsManager not available
+            const settings = {
+                wordsPerMinute: this.wordsPerMinute,
+                wordsPerMinuteIncrement: this.wordsPerMinuteIncrement
+            };
+            StorageManager.saveSettings(settings);
+        }
     },
 
     // Get current state for debugging
@@ -503,9 +511,36 @@ const ReaderEngine = {
         const formattedCurrent = currentWordNumber.toLocaleString();
         const formattedTotal = totalWords.toLocaleString();
 
-        // Update display
-        this.progressLine1Element.textContent = `Word ${formattedCurrent} of ${formattedTotal} (${percentComplete}%)`;
-        this.progressLine2Element.textContent = `Est. Time: ${timeRemainingText}`;
+        // Detect mobile screen
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Compact 3-line format for mobile
+            this.progressLine1Element.textContent = `${formattedCurrent}/${formattedTotal}`;
+            this.progressLine2Element.textContent = `${percentComplete}%`;
+            
+            // Shorten time for mobile display
+            let shortTime = timeRemainingText;
+            if (minutesRemaining < 1) {
+                shortTime = '<1min';
+            } else if (minutesRemaining < 60) {
+                const minutes = Math.ceil(minutesRemaining);
+                shortTime = `${minutes}min`;
+            } else {
+                const hours = Math.floor(minutesRemaining / 60);
+                const minutes = Math.ceil(minutesRemaining % 60);
+                shortTime = `${hours}h`;
+                if (minutes > 0) {
+                    shortTime += ` ${minutes}m`;
+                }
+            }
+            this.progressLine3Element.textContent = shortTime;
+        } else {
+            // Desktop format (full details)
+            this.progressLine1Element.textContent = `Word ${formattedCurrent} of ${formattedTotal} (${percentComplete}%)`;
+            this.progressLine2Element.textContent = `Est. Time: ${timeRemainingText}`;
+            this.progressLine3Element.textContent = ''; // Clear third line on desktop
+        }
 
         // Show the stats
         this.progressStatsElement.classList.remove('hidden');
