@@ -1,0 +1,483 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Dark Theme - Retro Amber Monitor Colors */
+    --color-bg: #000000;
+    --color-text: #FFB000;
+    --color-text-dim: #CC8C00;
+    --color-highlight: #FFCC33;
+    --color-glow: rgba(255, 176, 0, 0.3);
+    
+    /* Layout proportions */
+    --header-height: 50px;
+    --controls-height: 33.33vh;
+}
+
+/* Light Theme - Blue on Light Background */
+body.light-theme {
+    --color-bg: #E8F1F5;
+    --color-text: #1E3A5F;
+    --color-text-dim: #4A6B8A;
+    --color-highlight: #2C5F8D;
+    --color-glow: rgba(30, 58, 95, 0.2);
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Allow text selection in paragraph display */
+.paragraph-display,
+.paragraph-content {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* Settings Icon (Hamburger Menu) */
+.settings-icon {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    transition: color 0.2s, opacity 0.3s, visibility 0.3s;
+}
+
+.settings-icon:hover {
+    color: var(--color-highlight);
+}
+
+/* Hide hamburger when settings panel is open */
+.settings-panel.visible ~ .settings-icon {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Settings Panel */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: var(--color-bg);
+    border-left: 2px solid var(--color-text);
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.settings-panel.visible {
+    transform: translateX(0);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.settings-header h2 {
+    font-size: 24px;
+    color: var(--color-text);
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 36px;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: var(--color-highlight);
+}
+
+.settings-content {
+    padding: 20px;
+}
+
+.setting-group {
+    margin-bottom: 25px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--color-text-dim);
+}
+
+.setting-group input,
+.setting-group select {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.theme-select {
+    cursor: pointer;
+}
+
+.save-button,
+.load-new-text-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    color: var(--color-text);
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: all 0.2s;
+}
+
+.save-button:hover,
+.load-new-text-button:hover {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+.load-new-text-button {
+    margin-top: 10px;
+}
+
+/* Text Input Panel */
+.text-input-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    z-index: 998;
+    display: none;
+}
+
+.text-input-panel.visible {
+    display: block;
+}
+
+.text-input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.text-input-header h2 {
+    font-size: 24px;
+    color: var(--color-text);
+}
+
+.text-input-content {
+    padding: 20px;
+}
+
+.text-input-content textarea {
+    width: 100%;
+    height: 300px;
+    padding: 15px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    resize: vertical;
+}
+
+.load-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    color: var(--color-text);
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: all 0.2s;
+}
+
+.load-button:hover {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+/* Main App Container */
+.app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Section: Word Display */
+.word-display {
+    flex: 0 0 33.33vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.current-word {
+    font-size: clamp(40px, 12vw, 120px);
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    text-shadow: 0 0 10px var(--color-glow);
+}
+
+/* Middle Section: Paragraph Display */
+.paragraph-display {
+    flex: 0 0 33.33vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.paragraph-display .paragraph-content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+.paragraph-display.visible .paragraph-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.paragraph-content {
+    font-size: 16px;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sentence {
+    display: inline;
+}
+
+.sentence.current {
+    background-color: rgba(255, 176, 0, 0.2);
+    box-shadow: 0 0 10px var(--color-glow);
+    padding: 2px 0;
+}
+
+/* Bottom Section: Controls */
+.controls-area {
+    flex: 0 0 33.33vh;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 0;
+}
+
+.control-region {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid var(--color-text-dim);
+}
+
+.control-region:active {
+    background-color: rgba(255, 176, 0, 0.1);
+}
+
+.control-icon {
+    font-size: 36px;
+    color: var(--color-text);
+    transition: color 0.2s;
+}
+
+.control-region:hover .control-icon {
+    color: var(--color-highlight);
+}
+
+/* Grid positioning for controls */
+.control-up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.control-left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.control-center {
+    grid-column: 2;
+    grid-row: 2;
+    background-color: rgba(255, 176, 0, 0.05);
+}
+
+.control-center .control-icon {
+    font-size: 48px;
+}
+
+.control-right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.control-down {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+/* Speed Display */
+.speed-display {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 18px;
+    color: var(--color-text-dim);
+    padding: 5px 10px;
+    border: 1px solid var(--color-text-dim);
+    background-color: var(--color-bg);
+}
+
+/* Progress Stats Display */
+.progress-stats {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: var(--color-text-dim);
+    padding: 8px 12px;
+    border: 1px solid var(--color-text-dim);
+    background-color: var(--color-bg);
+    text-align: right;
+    line-height: 1.6;
+}
+
+.progress-stats.hidden {
+    display: none;
+}
+
+/* No Text Message */
+.no-text-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.no-text-message.hidden {
+    display: none;
+}
+
+.no-text-message p {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.load-text-prompt {
+    padding: 15px 30px;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    color: var(--color-text);
+    font-size: 18px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: all 0.2s;
+}
+
+.load-text-prompt:hover {
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Scrollbar Styling */
+.paragraph-display::-webkit-scrollbar {
+    width: 8px;
+}
+
+.paragraph-display::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+
+.paragraph-display::-webkit-scrollbar-thumb {
+    background: var(--color-text-dim);
+}
+
+.paragraph-display::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .settings-panel {
+        width: 100%;
+    }
+    
+    .text-input-panel {
+        width: 95%;
+    }
+    
+    .current-word {
+        font-size: clamp(30px, 10vw, 80px);
+    }
+    
+    .paragraph-content {
+        font-size: 14px;
+    }
+    
+    .control-icon {
+        font-size: 28px;
+    }
+    
+    .control-center .control-icon {
+        font-size: 36px;
+    }
+}
+
+/* Prevent text selection on touch devices */
+@media (pointer: coarse) {
+    * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
