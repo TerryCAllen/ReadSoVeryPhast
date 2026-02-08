@@ -28,10 +28,13 @@ const TextProcessor = {
         cleanedText = cleanedText.replace(/([.!?])([A-Z])/g, '$1 $2');
         
         // Fix missing spaces after sentence-ending punctuation followed by quotes then capital letter
-        // Handles: 'character."I' -> 'character." I'
-        // Handles: "character.'I" -> "character.' I"
-        // Supports both straight quotes (" ') and curly quotes (" " ' ')
-        cleanedText = cleanedText.replace(/([.!?])(["'""''])([A-Z])/g, '$1$2 $3');
+        // Handle each quote type explicitly for reliability
+        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Straight double quote
+        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Straight single quote
+        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Curly left double quote
+        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Curly right double quote
+        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Curly left single quote
+        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Curly right single quote
 
         // Remove excessive line breaks (more than 2 consecutive)
         cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
