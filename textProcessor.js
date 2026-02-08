@@ -28,13 +28,13 @@ const TextProcessor = {
         cleanedText = cleanedText.replace(/([.!?])([A-Z])/g, '$1 $2');
         
         // Fix missing spaces after sentence-ending punctuation followed by quotes then capital letter
-        // Handle each quote type explicitly for reliability
-        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Straight double quote
-        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Straight single quote
-        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Curly left double quote
-        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');  // Curly right double quote
-        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Curly left single quote
-        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');  // Curly right single quote
+        // Using Unicode escape sequences for reliability across different editors/encodings
+        cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');        // Straight double quote U+0022
+        cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');        // Straight single quote U+0027
+        cleanedText = cleanedText.replace(/([.!?])(\u201C)([A-Z])/g, '$1$2 $3');   // Curly left double quote U+201C
+        cleanedText = cleanedText.replace(/([.!?])(\u201D)([A-Z])/g, '$1$2 $3');   // Curly right double quote U+201D
+        cleanedText = cleanedText.replace(/([.!?])(\u2018)([A-Z])/g, '$1$2 $3');   // Curly left single quote U+2018
+        cleanedText = cleanedText.replace(/([.!?])(\u2019)([A-Z])/g, '$1$2 $3');   // Curly right single quote U+2019
 
         // Remove excessive line breaks (more than 2 consecutive)
         cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
