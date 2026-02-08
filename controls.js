@@ -623,17 +623,17 @@ const ControlsManager = {
     },
 
     // Create library list item element
-    createLibraryListItem: function(document) {
+    createLibraryListItem: function(libraryDocument) {
         const listItem = document.createElement('div');
         listItem.className = 'library-item';
-        listItem.dataset.documentId = document.id;
+        listItem.dataset.documentId = libraryDocument.id;
 
         // Calculate progress percentage
-        const totalWords = document.textContent.split(/\s+/).length;
-        const progressPercent = totalWords > 0 ? Math.round((document.position.wordIndex / totalWords) * 100) : 0;
+        const totalWords = libraryDocument.textContent.split(/\s+/).length;
+        const progressPercent = totalWords > 0 ? Math.round((libraryDocument.position.wordIndex / totalWords) * 100) : 0;
 
         // Format last read time
-        const lastReadDate = new Date(document.lastRead);
+        const lastReadDate = new Date(libraryDocument.lastRead);
         const now = new Date();
         const diffMs = now - lastReadDate;
         const diffMins = Math.floor(diffMs / 60000);
@@ -653,23 +653,23 @@ const ControlsManager = {
 
         listItem.innerHTML = `
             <div class="library-item-content">
-                <div class="library-item-title">${this.escapeHtml(document.title)}</div>
+                <div class="library-item-title">${this.escapeHtml(libraryDocument.title)}</div>
                 <div class="library-item-meta">${progressPercent}% complete • ${timeAgo}</div>
             </div>
-            <button class="library-item-delete" data-document-id="${document.id}">×</button>
+            <button class="library-item-delete" data-document-id="${libraryDocument.id}">×</button>
         `;
 
         // Add click handler for switching to document
         const contentArea = listItem.querySelector('.library-item-content');
         this.addClickAndTouchListener(contentArea, () => {
-            this.handleSwitchToDocument(document.id);
+            this.handleSwitchToDocument(libraryDocument.id);
         });
 
         // Add click handler for delete button
         const deleteButton = listItem.querySelector('.library-item-delete');
         this.addClickAndTouchListener(deleteButton, (event) => {
             event.stopPropagation();
-            this.handleDeleteDocument(document.id);
+            this.handleDeleteDocument(libraryDocument.id);
         });
 
         return listItem;
