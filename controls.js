@@ -19,6 +19,16 @@ const ControlsManager = {
     helpPanel: null,
     closeHelpButton: null,
     
+    // Search elements
+    searchIcon: null,
+    searchPanel: null,
+    closeSearchButton: null,
+    searchInput: null,
+    searchButton: null,
+    searchResultsList: null,
+    searchNoResults: null,
+    searchPrompt: null,
+    
     // Save icon element
     saveIcon: null,
     
@@ -71,6 +81,16 @@ const ControlsManager = {
         this.helpPanel = document.getElementById('helpPanel');
         this.closeHelpButton = document.getElementById('closeHelp');
         
+        // Search
+        this.searchIcon = document.getElementById('searchIcon');
+        this.searchPanel = document.getElementById('searchPanel');
+        this.closeSearchButton = document.getElementById('closeSearch');
+        this.searchInput = document.getElementById('searchInput');
+        this.searchButton = document.getElementById('searchButton');
+        this.searchResultsList = document.getElementById('searchResultsList');
+        this.searchNoResults = document.getElementById('searchNoResults');
+        this.searchPrompt = document.getElementById('searchPrompt');
+        
         // Save icon
         this.saveIcon = document.getElementById('saveIcon');
         
@@ -118,6 +138,26 @@ const ControlsManager = {
         
         // Save icon
         this.addClickAndTouchListener(this.saveIcon, () => this.openSaveToLibrary());
+        
+        // Search
+        this.addClickAndTouchListener(this.searchIcon, () => this.openSearch());
+        this.addClickAndTouchListener(this.closeSearchButton, () => this.closeSearch());
+        this.addClickAndTouchListener(this.searchButton, () => this.performSearch());
+        
+        // Search input - enable button when text entered
+        if (this.searchInput) {
+            this.searchInput.addEventListener('input', () => {
+                const hasText = this.searchInput.value.trim().length > 0;
+                this.searchButton.disabled = !hasText;
+            });
+            
+            // Allow Enter key to search
+            this.searchInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter' && !this.searchButton.disabled) {
+                    this.performSearch();
+                }
+            });
+        }
         
         // Library
         this.addClickAndTouchListener(this.myLibraryButton, () => this.openLibrary());
@@ -329,41 +369,30 @@ const ControlsManager = {
             return;
         }
 
-        // Create new document from textbox (auto-save enabled)
-        const document = LibraryManager.createDocument(rawText, 'textbox');
+        // Save as temp text (unsaved - will show save icon)
+        LibraryManager.saveTempText(rawText, 0);
         
-        // Add to library
-        const result = LibraryManager.addDocument(document);
+        // Load text into reader
+        const success = ReaderEngine.loadText(rawText, 0);
         
-        if (result.success) {
-            // Set as active document
-            LibraryManager.saveActiveDocumentId(document.id);
+        if (success) {
+            // Hide no text message
+            this.noTextMessage.classList.add('hidden');
             
-            // Load text into reader
-            const success = ReaderEngine.loadText(rawText, 0);
+            // Close text input panel
+            this.closeTextInput();
             
-            if (success) {
-                // Hide no text message
-                this.noTextMessage.classList.add('hidden');
-                
-                // Close text input panel
-                this.closeTextInput();
-                
-                // Hide save icon (this is a saved document)
-                this.hideSaveIcon();
-                
-                // Show paragraph display (paused state)
-                ReaderEngine.displayParagraph();
-                
-                // Show help icon (text loaded in paused state)
-                this.showHelpIcon();
-            } else {
-                alert('Failed to load text. Please try again.');
-            }
-        } else if (result.error === 'storage_full') {
-            alert('Storage is full! Please delete some documents from your library before adding new ones.');
+            // Show save icon (unsaved text from textbox)
+            this.showSaveIcon();
+            
+            // Show paragraph display (paused state)
+            ReaderEngine.displayParagraph();
+            
+            // Show help and search icons (text loaded in paused state)
+            this.showHelpIcon();
+            this.showSearchIcon();
         } else {
-            alert('Failed to save text to library.');
+            alert('Failed to load text. Please try again.');
         }
     },
 
@@ -628,6 +657,9 @@ const ControlsManager = {
         listItem.className = 'library-item';
         listItem.dataset.documentId = libraryDocument.id;
 
+        // Calculate document size
+        const docSize = this.formatDocumentSize(libraryDocument.textContent);
+
         // Calculate progress percentage
         const totalWords = libraryDocument.textContent.split(/\s+/).length;
         const progressPercent = totalWords > 0 ? Math.round((libraryDocument.position.wordIndex / totalWords) * 100) : 0;
@@ -654,7 +686,7 @@ const ControlsManager = {
         listItem.innerHTML = `
             <div class="library-item-content">
                 <div class="library-item-title">${this.escapeHtml(libraryDocument.title)}</div>
-                <div class="library-item-meta">${progressPercent}% complete • ${timeAgo}</div>
+                <div class="library-item-meta">${docSize} • ${progressPercent}% complete • ${timeAgo}</div>
             </div>
             <button class="library-item-delete" data-document-id="${libraryDocument.id}">×</button>
         `;
@@ -802,6 +834,163 @@ const ControlsManager = {
             this.closeSaveToLibrary();
         } else {
             alert('Failed to save to library.');
+        }
+    },
+
+    // Show search icon (only when paused)
+    showSearchIcon: function() {
+        if (this.searchIcon) {
+            this.searchIcon.classList.remove('hidden');
+        }
+    },
+
+    // Hide search icon (when reading)
+    hideSearchIcon: function() {
+        if (this.searchIcon) {
+            this.searchIcon.classList.add('hidden');
+        }
+    },
+
+    // Open search panel
+    openSearch: function() {
+        // Clear previous search
+        this.searchInput.value = '';
+        this.searchButton.disabled = true;
+        this.searchResultsList.innerHTML = '';
+        this.searchNoResults.classList.add('hidden');
+        this.searchPrompt.classList.remove('hidden');
+
+        // Show panel
+        this.searchPanel.classList.remove('hidden');
+        this.searchPanel.classList.add('visible');
+
+        // Focus on search input
+        setTimeout(() => this.searchInput.focus(), 100);
+    },
+
+    // Close search panel
+    closeSearch: function() {
+        this.searchPanel.classList.remove('visible');
+        this.searchPanel.classList.add('hidden');
+    },
+
+    // Perform search
+    performSearch: function() {
+        const searchTerm = this.searchInput.value.trim().toLowerCase();
+
+        if (!searchTerm) {
+            return;
+        }
+
+        // Get all sentences from ReaderEngine
+        const allSentences = ReaderEngine.allSentences;
+
+        if (!allSentences || allSentences.length === 0) {
+            this.searchPrompt.classList.add('hidden');
+            this.searchNoResults.classList.remove('hidden');
+            return;
+        }
+
+        // Search sentences (case-insensitive)
+        const results = [];
+        
+        for (let sentenceIndex = 0; sentenceIndex < allSentences.length && results.length < 100; sentenceIndex++) {
+            const sentence = allSentences[sentenceIndex];
+            
+            if (sentence.toLowerCase().includes(searchTerm)) {
+                results.push({
+                    sentenceIndex: sentenceIndex,
+                    sentence: sentence
+                });
+            }
+        }
+
+        // Display results
+        this.displaySearchResults(results, searchTerm);
+    },
+
+    // Display search results
+    displaySearchResults: function(results, searchTerm) {
+        // Clear previous results
+        this.searchResultsList.innerHTML = '';
+        this.searchPrompt.classList.add('hidden');
+
+        if (results.length === 0) {
+            this.searchNoResults.classList.remove('hidden');
+            return;
+        }
+
+        this.searchNoResults.classList.add('hidden');
+
+        // Create result items
+        results.forEach(result => {
+            const resultItem = this.createSearchResultItem(result, searchTerm);
+            this.searchResultsList.appendChild(resultItem);
+        });
+    },
+
+    // Create search result item
+    createSearchResultItem: function(result, searchTerm) {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+
+        // Highlight search term in sentence
+        const highlightedSentence = this.highlightSearchTerm(result.sentence, searchTerm);
+
+        item.innerHTML = highlightedSentence;
+
+        // Add click handler to jump to this sentence
+        this.addClickAndTouchListener(item, () => {
+            this.handleSearchResultClick(result.sentenceIndex);
+        });
+
+        return item;
+    },
+
+    // Highlight search term in text
+    highlightSearchTerm: function(text, searchTerm) {
+        // Escape HTML
+        const escapedText = this.escapeHtml(text);
+        const escapedTerm = this.escapeHtml(searchTerm);
+
+        // Create regex for case-insensitive search
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+
+        // Replace with marked version
+        return escapedText.replace(regex, '<mark>$1</mark>');
+    },
+
+    // Handle search result click
+    handleSearchResultClick: function(sentenceIndex) {
+        // Find the word index for the start of this sentence
+        const wordIndex = ReaderEngine.getWordIndexForSentence(sentenceIndex);
+
+        if (wordIndex === -1) {
+            alert('Could not find sentence position.');
+            return;
+        }
+
+        // Jump to this position
+        ReaderEngine.currentWordIndex = wordIndex;
+        ReaderEngine.currentSentenceIndex = sentenceIndex;
+
+        // Display paragraph (will highlight the sentence automatically)
+        ReaderEngine.displayParagraph();
+
+        // Close search panel
+        this.closeSearch();
+    },
+
+    // Format document size for display
+    formatDocumentSize: function(textContent) {
+        const bytes = new Blob([textContent]).size;
+        const kilobytes = bytes / 1024;
+
+        if (kilobytes < 1000) {
+            return Math.round(kilobytes) + 'KB';
+        } else {
+            const megabytes = kilobytes / 1024;
+            return megabytes.toFixed(1) + 'MB';
         }
     }
 };

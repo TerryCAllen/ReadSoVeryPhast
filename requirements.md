@@ -577,10 +577,100 @@ cleanedText = cleanedText.replace(/([.!?])(\u2019)([A-Z])/g, '$1$2 $3');   // Cu
 
 ---
 
+## Recent Updates (Feb 8, 2026 - Morning Session)
+
+### New Features Implemented
+
+#### 1. Document Size Display in Library
+- [x] **Library shows document size**
+  - Format: `67KB • 26% complete • Just now`
+  - Automatically calculates size from text content
+  - Displays in KB (< 1000KB) or MB (≥ 1000KB)
+  - Helps users understand storage usage at a glance
+
+**Implementation:**
+- Function: `formatDocumentSize()` in controls.js
+- Uses `Blob` API to calculate accurate byte size
+- Updated library list item template to include size first
+
+#### 2. Save Button for Pasted Text
+- [x] **Pasted text now shows save icon**
+  - When user pastes text into textbox, it loads as unsaved (temp text)
+  - Save icon (💾) appears in top-left
+  - Click save icon to promote to library with custom title
+  - Matches bookmarklet workflow (unsaved → save → library)
+
+**Workflow:**
+1. User clicks "Load New Text"
+2. Pastes text and clicks "Load Text"
+3. Text loads for reading, save icon appears
+4. User clicks save icon when ready to keep it
+5. Enters title and saves to library
+
+**Benefits:**
+- Users can test/preview pasted text before committing
+- Consistent with bookmarklet behavior
+- Reduces accidental library clutter
+
+#### 3. Search Functionality
+- [x] **Search within current document**
+  - Search icon (⌕) appears when paused (next to help icon)
+  - Click to open search panel with input and button
+  - Case-insensitive search through all sentences
+  - Displays up to 100 results with search term highlighted
+  - Click result to jump directly to that sentence
+
+**Search Features:**
+- **ASCII icon** (⌕) - stays in amber theme
+- **Only visible when paused** - reduces distraction while reading
+- **Enter key support** - press Enter to search
+- **Highlighted results** - Search term shown in `<mark>` tags
+- **Jump to sentence** - Clicking result positions and highlights the sentence
+- **Uses existing highlighting** - Leverages current sentence highlight system
+- **Auto-scrolling** - Paragraph scrolls to show selected sentence
+
+**User Experience:**
+1. Pause reading (Space or center button)
+2. Search icon appears in top-left
+3. Click search icon
+4. Type search term (button enables when text entered)
+5. Click Search or press Enter
+6. Scroll through results
+7. Click a result to jump to that position
+8. Continue reading from that point
+
+**Technical Implementation:**
+- Search input enables button only when text entered
+- Searches `ReaderEngine.allSentences` array
+- Caps results at 100 for performance
+- Escapes HTML to prevent XSS
+- Uses regex for case-insensitive highlighting
+- Finds word index via `getWordIndexForSentence()`
+- Sets reader position and displays paragraph
+- Closes search panel after selection
+
+**Files Modified:**
+- `index.html` - Added search icon and panel
+- `styles.css` - Styled search elements
+- `controls.js` - Search UI logic and event handlers
+- `reader.js` - Added `allSentences` getter and `getWordIndexForSentence()`
+
+**CSS Positioning:**
+```
+Help icon: left 15px
+Search icon: left 75px  
+Save icon: left 135px
+```
+
+---
+
 ## Future Enhancements (Phase 2)
 
 Potential features for future development:
 - [x] ~~URL loading with text extraction~~ → **Implemented via bookmarklet!**
+- [x] ~~Save functionality for pasted text~~ → **Implemented!**
+- [x] ~~Search within document~~ → **Implemented!**
+- [x] ~~Document size display~~ → **Implemented!**
 - [ ] Additional theme options
 - [ ] Custom color picker
 - [ ] Font family selection
@@ -590,3 +680,6 @@ Potential features for future development:
 - [ ] Multiple saved texts
 - [ ] Smarter quote handling (ML-based or heuristic quote pairing)
 - [ ] Browser extension version (better than bookmarklet)
+- [ ] Search across all library documents (not just current)
+- [ ] Search history/recent searches
+- [ ] Regular expression search support

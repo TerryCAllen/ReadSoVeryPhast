@@ -10,6 +10,9 @@
     <!-- Help Icon (top-left, only when paused) -->
     <div id="helpIcon" class="help-icon hidden">?</div>
 
+    <!-- Search Icon (top-left, next to help, only when paused) -->
+    <div id="searchIcon" class="search-icon hidden" title="Search">⌕</div>
+
     <!-- Save Icon (top-left, next to help, only when unsaved text) -->
     <div id="saveIcon" class="save-icon hidden" title="Save to Library">💾</div>
 
@@ -143,6 +146,31 @@
         <div class="text-input-content">
             <textarea id="textInputArea" placeholder="Paste your text here..."></textarea>
             <button id="loadTextButton" class="load-button">Load Text</button>
+        </div>
+    </div>
+
+    <!-- Search Panel (hidden by default) -->
+    <div id="searchPanel" class="search-panel hidden">
+        <div class="search-header">
+            <h2>Search Document</h2>
+            <button id="closeSearch" class="close-button">×</button>
+        </div>
+        <div class="search-content">
+            <div class="search-input-group">
+                <input type="text" id="searchInput" placeholder="Enter search term...">
+                <button id="searchButton" class="search-button" disabled>Search</button>
+            </div>
+            <div id="searchResults" class="search-results">
+                <div id="searchResultsList" class="search-results-list">
+                    <!-- Search results will be dynamically inserted here -->
+                </div>
+                <div id="searchNoResults" class="search-no-results hidden">
+                    <p>No results found.</p>
+                </div>
+                <div id="searchPrompt" class="search-prompt">
+                    <p>Enter a search term to find sentences in the current document.</p>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -85,8 +85,9 @@ const ReaderEngine = {
         // Hide progress stats
         this.hideProgressStats();
         
-        // Hide help icon
+        // Hide help and search icons
         ControlsManager.hideHelpIcon();
+        ControlsManager.hideSearchIcon();
         
         // Update play/pause icon
         this.playPauseIconElement.textContent = '❚❚';
@@ -115,8 +116,9 @@ const ReaderEngine = {
         // Show progress stats
         this.showProgressStats();
         
-        // Show help icon
+        // Show help and search icons
         ControlsManager.showHelpIcon();
+        ControlsManager.showSearchIcon();
         
         // Save position
         this.saveCurrentPosition();
@@ -571,5 +573,37 @@ const ReaderEngine = {
         if (this.progressStatsElement) {
             this.progressStatsElement.classList.add('hidden');
         }
+    },
+
+    // Get all sentences (for search functionality)
+    get allSentences() {
+        if (!this.processedText || !this.processedText.paragraphs) {
+            return [];
+        }
+
+        const sentences = [];
+        this.processedText.paragraphs.forEach(paragraph => {
+            paragraph.sentences.forEach(sentence => {
+                sentences.push(sentence.text);
+            });
+        });
+
+        return sentences;
+    },
+
+    // Get word index for a specific sentence index
+    getWordIndexForSentence: function(sentenceIndex) {
+        if (!this.allWords || this.allWords.length === 0) {
+            return -1;
+        }
+
+        // Find the first word with this sentence index
+        for (let wordIndex = 0; wordIndex < this.allWords.length; wordIndex++) {
+            if (this.allWords[wordIndex].sentenceIndex === sentenceIndex) {
+                return wordIndex;
+            }
+        }
+
+        return -1;
     }
 };
