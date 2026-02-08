@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS Shortcut - Read So Very Phast</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin: 30px 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        p, li {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .install-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .install-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 20px 50px;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 20px 0;
+        }
+
+        .install-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .install-button:active {
+            transform: translateY(0);
+        }
+
+        .install-note {
+            font-size: 1.1em;
+            margin-top: 20px;
+            opacity: 0.95;
+        }
+
+        .step-list {
+            background: #edf2f7;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step-list ol {
+            margin-left: 20px;
+        }
+
+        .step-list li {
+            margin-bottom: 12px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .note {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .screenshot-placeholder {
+            background: #e2e8f0;
+            border: 2px dashed #a0aec0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            color: #4a5568;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #90cdf4;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .install-button {
+                font-size: 1.2em;
+                padding: 18px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 iOS Shortcut</h1>
+            <p class="tagline">Speed read any web page on iPhone & iPad</p>
+        </header>
+
+        <div class="content">
+            <h2>For iPhone & iPad Users</h2>
+            <p>
+                Since iOS Safari blocks JavaScript in bookmarks, we've created an <strong>iOS Shortcut</strong> 
+                that works perfectly with the Share Sheet. Install it once, use it everywhere!
+            </p>
+
+            <div class="success">
+                <strong>✨ How It Works:</strong> The shortcut fetches the webpage, extracts the article 
+                text using Mozilla's Readability technology, and opens it in Read So Very Phast—all with 
+                one tap from Safari's Share button!
+            </div>
+
+            <div class="install-box">
+                <h3 style="color: white; margin-top: 0;">Install the Shortcut</h3>
+                <a href="shortcuts://import-shortcut/?url=https://raw.githubusercontent.com/TerryCAllen/ReadSoVeryPhast/main/Read-So-Very-Phast.shortcut&name=Read%20So%20Very%20Phast" class="install-button">
+                    📥 Install Shortcut
+                </a>
+                <p class="install-note">
+                    Tap the button above on your iPhone or iPad<br>
+                    (One-time installation, takes 10 seconds)
+                </p>
+            </div>
+
+            <h2>Installation Steps</h2>
+            <div class="step-list">
+                <ol>
+                    <li>On your <strong>iPhone or iPad</strong>, visit this page in Safari</li>
+                    <li>Tap the <strong>"📥 Install Shortcut"</strong> button above</li>
+                    <li>iOS will open the <strong>Shortcuts app</strong></li>
+                    <li>Review the shortcut actions (optional)</li>
+                    <li>Tap <strong>"Add Shortcut"</strong> at the bottom</li>
+                    <li>Done! The shortcut is now installed</li>
+                </ol>
+            </div>
+
+            <div class="note">
+                <strong>⚠️ First Time?</strong> If you've never used Shortcuts before, iOS may ask for 
+                permissions. Just tap "Allow" to let the shortcut fetch web pages.
+            </div>
+
+            <h2>How to Use</h2>
+            <div class="step-list">
+                <h3>Reading Any Article:</h3>
+                <ol>
+                    <li>Navigate to an article or webpage in <strong>Safari</strong></li>
+                    <li>Tap the <strong>Share button</strong> (square with arrow pointing up)</li>
+                    <li>Scroll down to find <strong>"Read So Very Phast"</strong></li>
+                    <li>Tap it and wait a moment while it extracts the text</li>
+                    <li>The speed reader opens with the article ready to read!</li>
+                    <li>Press the center <strong>Play button</strong> (or spacebar on iPad) to start</li>
+                </ol>
+            </div>
+
+            <div class="success">
+                <strong>💡 Pro Tip:</strong> Add "Read So Very Phast" to your Share Sheet favorites by 
+                scrolling to the bottom of the Share menu and tapping "Edit Actions". Drag it to the top 
+                for quick access!
+            </div>
+
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Smart Extraction</h4>
+                    <p>Uses Mozilla Readability to extract clean article content, removing ads and navigation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🚀 One-Tap Reading</h4>
+                    <p>Share any article directly from Safari to start speed reading instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔒 Privacy First</h4>
+                    <p>All processing happens on your device. No servers, no tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📱 Native iOS</h4>
+                    <p>Works perfectly with iOS Share Sheet - feels like a native app!</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⚡ No App Required</h4>
+                    <p>Just a shortcut - no App Store downloads or updates needed.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 Universal</h4>
+                    <p>Works on any website you can view in Safari.</p>
+                </div>
+            </div>
+
+            <h2>Perfect For</h2>
+            <ul>
+                <li>📰 News articles from any website</li>
+                <li>📝 Blog posts and long-form content</li>
+                <li>📚 Wikipedia articles</li>
+                <li>📖 Online documentation</li>
+                <li>🔬 Research papers and articles</li>
+                <li>🍳 Recipe sites</li>
+                <li>✉️ Email newsletters (when viewing in browser)</li>
+                <li>📕 Project Gutenberg books</li>
+            </ul>
+
+            <h2>Troubleshooting</h2>
+            
+            <h3>Shortcut not appearing in Share Sheet</h3>
+            <p>
+                Make sure you've completed the installation by tapping "Add Shortcut" in the Shortcuts app. 
+                You may need to scroll down in the Share Sheet to find it the first time.
+            </p>
+
+            <h3>"Shortcut cannot be opened" error</h3>
+            <p>
+                Make sure you're opening the install link on your iPhone or iPad, not on a desktop computer. 
+                The shortcut only works on iOS devices.
+            </p>
+
+            <h3>No text extracted from page</h3>
+            <p>
+                Some pages (like PDFs or heavily JavaScript-dependent sites) may not extract well. 
+                Try copying the text manually and pasting it into the Read So Very Phast app directly.
+            </p>
+
+            <h3>Shortcut takes a long time</h3>
+            <p>
+                The shortcut needs to download the webpage and process it. For long articles or slow 
+                connections, this may take 5-10 seconds. Be patient!
+            </p>
+
+            <h3>Privacy permissions prompt</h3>
+            <p>
+                The first time you run the shortcut, iOS may ask for permission to access web pages. 
+                This is normal - tap "Allow" to let the shortcut work. Your data stays private on your device.
+            </p>
+
+            <h2>What the Shortcut Does</h2>
+            <p>
+                For transparency, here's exactly what the shortcut does (you can review this yourself 
+                in the Shortcuts app):
+            </p>
+            <div class="step-list">
+                <ol>
+                    <li>Gets the URL of the current Safari page</li>
+                    <li>Downloads the HTML content of that page</li>
+                    <li>Loads the Mozilla Readability library</li>
+                    <li>Extracts the main article text (removing ads, navigation, etc.)</li>
+                    <li>Encodes the text for safe URL transmission</li>
+                    <li>Opens Read So Very Phast with the text pre-loaded</li>
+                </ol>
+            </div>
+
+            <div class="success">
+                <strong>🔒 Your Privacy:</strong> All of this happens entirely on your device. Nothing is 
+                sent to external servers. The shortcut simply passes the extracted text directly to the 
+                Read So Very Phast web app.
+            </div>
+
+            <h2>Alternative: Manual Copy-Paste</h2>
+            <p>
+                If the shortcut doesn't work for a particular page, you can always:
+            </p>
+            <div class="step-list">
+                <ol>
+                    <li>Select and copy the article text in Safari</li>
+                    <li>Navigate to <a href="https://terrycallen.github.io/ReadSoVeryPhast/">Read So Very Phast</a></li>
+                    <li>Paste the text into the input area</li>
+                    <li>Start reading!</li>
+                </ol>
+            </div>
+
+            <div class="install-box" style="margin-top: 40px;">
+                <h3 style="color: white; margin-top: 0;">Ready to Get Started?</h3>
+                <a href="shortcuts://import-shortcut/?url=https://raw.githubusercontent.com/TerryCAllen/ReadSoVeryPhast/main/Read-So-Very-Phast.shortcut&name=Read%20So%20Very%20Phast" class="install-button">
+                    📥 Install Shortcut Now
+                </a>
+                <p class="install-note">
+                    Tap on your iPhone/iPad to install
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                Part of <a href="https://terrycallen.github.io/ReadSoVeryPhast/" target="_blank">Read So Very Phast</a> 
+                | <a href="https://github.com/terrycallen/ReadSoVeryPhast" target="_blank">View on GitHub</a>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                Built with ❤️ for fast readers everywhere
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

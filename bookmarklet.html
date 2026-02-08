@@ -205,6 +205,11 @@
         </header>
 
         <div class="content">
+            <div id="iosNotice" class="note" style="display: none;">
+                <strong>📱 iPhone/iPad User?</strong> iOS Safari no longer supports JavaScript bookmarklets. 
+                Please use our <a href="shortcuts.html" style="color: #c53030; text-decoration: underline; font-weight: bold;">iOS Shortcut instead</a> - 
+                it works perfectly with the Share Sheet!
+            </div>
             <h2>What is This?</h2>
             <p>
                 The Read So Very Phast bookmarklet lets you speed-read any article, blog post, or web page 
@@ -395,6 +400,15 @@
     </div>
 
     <script>
+        // Detect iOS and show notice
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        if (isIOS()) {
+            document.getElementById('iosNotice').style.display = 'block';
+        }
+
         // Copy bookmarklet code to clipboard for mobile users
         document.getElementById('copyBookmarklet').addEventListener('click', function() {
             // The bookmarklet code (same as the href of the main bookmarklet link)
