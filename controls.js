@@ -55,6 +55,9 @@ const ControlsManager = {
     textInputArea: null,
     loadTextPrompt: null,
     noTextMessage: null,
+    
+    // Document title element
+    documentTitle: null,
 
     // Initialize controls
     initialize: function() {
@@ -117,6 +120,9 @@ const ControlsManager = {
         this.textInputArea = document.getElementById('textInputArea');
         this.loadTextPrompt = document.getElementById('loadTextPrompt');
         this.noTextMessage = document.getElementById('noTextMessage');
+        
+        // Document title
+        this.documentTitle = document.getElementById('documentTitle');
     },
 
     // Attach all event listeners
@@ -384,6 +390,9 @@ const ControlsManager = {
             
             // Show save icon (unsaved text from textbox)
             this.showSaveIcon();
+            
+            // Update document title
+            this.updateDocumentTitle('Unsaved Text');
             
             // Show paragraph display (paused state)
             ReaderEngine.displayParagraph();
@@ -735,6 +744,9 @@ const ControlsManager = {
 
             // Hide save icon (this is a saved document)
             this.hideSaveIcon();
+            
+            // Update document title
+            this.updateDocumentTitle(document.title);
 
             // Show paragraph display
             ReaderEngine.displayParagraph();
@@ -894,13 +906,13 @@ const ControlsManager = {
         // Search sentences (case-insensitive)
         const results = [];
         
-        for (let sentenceIndex = 0; sentenceIndex < allSentences.length && results.length < 100; sentenceIndex++) {
-            const sentence = allSentences[sentenceIndex];
+        for (let arrayIndex = 0; arrayIndex < allSentences.length && results.length < 100; arrayIndex++) {
+            const sentenceObject = allSentences[arrayIndex];
             
-            if (sentence.toLowerCase().includes(searchTerm)) {
+            if (sentenceObject.text.toLowerCase().includes(searchTerm)) {
                 results.push({
-                    sentenceIndex: sentenceIndex,
-                    sentence: sentence
+                    sentenceIndex: sentenceObject.sentenceIndex,
+                    sentence: sentenceObject.text
                 });
             }
         }
@@ -991,6 +1003,13 @@ const ControlsManager = {
         } else {
             const megabytes = kilobytes / 1024;
             return megabytes.toFixed(1) + 'MB';
+        }
+    },
+
+    // Update document title display
+    updateDocumentTitle: function(title) {
+        if (this.documentTitle) {
+            this.documentTitle.textContent = title || '';
         }
     }
 };

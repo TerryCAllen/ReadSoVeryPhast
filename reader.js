@@ -584,7 +584,10 @@ const ReaderEngine = {
         const sentences = [];
         this.processedText.paragraphs.forEach(paragraph => {
             paragraph.sentences.forEach(sentence => {
-                sentences.push(sentence.text);
+                sentences.push({
+                    text: sentence.text,
+                    sentenceIndex: sentence.sentenceIndex
+                });
             });
         });
 
