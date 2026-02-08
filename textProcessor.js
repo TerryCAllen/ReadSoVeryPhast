@@ -24,8 +24,14 @@ const TextProcessor = {
         cleanedText = this.normalizeWhitespace(cleanedText);
 
         // Fix missing spaces after sentence-ending punctuation
-        // This handles cases like "primates.Since" -> "primates. Since"
+        // Handles: "primates.Since" -> "primates. Since"
         cleanedText = cleanedText.replace(/([.!?])([A-Z])/g, '$1 $2');
+        
+        // Fix missing spaces after sentence-ending punctuation followed by quotes then capital letter
+        // Handles: 'character."I' -> 'character." I'
+        // Handles: "character.'I" -> "character.' I"
+        // Supports both straight quotes (" ') and curly quotes (" " ' ')
+        cleanedText = cleanedText.replace(/([.!?])(["'""''])([A-Z])/g, '$1$2 $3');
 
         // Remove excessive line breaks (more than 2 consecutive)
         cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
