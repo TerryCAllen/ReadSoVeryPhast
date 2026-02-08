@@ -984,9 +984,9 @@ const ControlsManager = {
 
         // Jump to this position
         ReaderEngine.currentWordIndex = wordIndex;
-        ReaderEngine.currentSentenceIndex = sentenceIndex;
 
-        // Display paragraph (will highlight the sentence automatically)
+        // Display current word and paragraph
+        ReaderEngine.displayCurrentWord();
         ReaderEngine.displayParagraph();
 
         // Close search panel
@@ -1010,6 +1010,20 @@ const ControlsManager = {
     updateDocumentTitle: function(title) {
         if (this.documentTitle) {
             this.documentTitle.textContent = title || '';
+        }
+    },
+
+    // Show document title (when paused)
+    showDocumentTitle: function() {
+        if (this.documentTitle) {
+            this.documentTitle.classList.remove('hidden');
+        }
+    },
+
+    // Hide document title (when reading)
+    hideDocumentTitle: function() {
+        if (this.documentTitle) {
+            this.documentTitle.classList.add('hidden');
         }
     }
 };

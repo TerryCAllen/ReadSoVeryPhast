@@ -85,9 +85,10 @@ const ReaderEngine = {
         // Hide progress stats
         this.hideProgressStats();
         
-        // Hide help and search icons
+        // Hide help, search icons, and document title
         ControlsManager.hideHelpIcon();
         ControlsManager.hideSearchIcon();
+        ControlsManager.hideDocumentTitle();
         
         // Update play/pause icon
         this.playPauseIconElement.textContent = '❚❚';
@@ -116,9 +117,10 @@ const ReaderEngine = {
         // Show progress stats
         this.showProgressStats();
         
-        // Show help and search icons
+        // Show help, search icons, and document title
         ControlsManager.showHelpIcon();
         ControlsManager.showSearchIcon();
+        ControlsManager.showDocumentTitle();
         
         // Save position
         this.saveCurrentPosition();
