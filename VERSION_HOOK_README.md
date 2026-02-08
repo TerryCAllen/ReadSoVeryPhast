@@ -37,15 +37,15 @@ TIMESTAMP=$(date -u '+%Y.%m.%d-%H:%M UTC')
 # Update the version in main.js (use different sed syntax for cross-platform compatibility)
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # macOS/Linux
-    sed -i.bak "s/const APP_VERSION = \".*\";/const APP_VERSION = \"$TIMESTAMP\";/" SpeedRead/main.js
-    rm -f SpeedRead/main.js.bak
+    sed -i.bak "s/const APP_VERSION = \".*\";/const APP_VERSION = \"$TIMESTAMP\";/" main.js
+    rm -f main.js.bak
 else
     # Windows (Git Bash)
-    sed -i "s/const APP_VERSION = \".*\";/const APP_VERSION = \"$TIMESTAMP\";/" SpeedRead/main.js
+    sed -i "s/const APP_VERSION = \".*\";/const APP_VERSION = \"$TIMESTAMP\";/" main.js
 fi
 
 # Stage the updated file
-git add SpeedRead/main.js
+git add main.js
 
 echo "✓ Updated APP_VERSION to: $TIMESTAMP"
 
