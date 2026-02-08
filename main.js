@@ -2,7 +2,7 @@
 // Ties all modules together and manages application lifecycle
 
 // App version
-const APP_VERSION = "2026.02.08-17:01 UTC";
+const APP_VERSION = "2026.02.08-17:14 UTC";
 
 const SpeedReaderApp = {
     // Application state
