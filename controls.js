@@ -482,5 +482,21 @@ const ControlsManager = {
     closeProgressDetail: function() {
         this.progressDetailPanel.classList.remove('visible');
         this.progressDetailPanel.classList.add('hidden');
+    },
+
+    // Close all panels (settings, help, text input, progress detail)
+    closeAllPanels: function() {
+        if (this.settingsPanel.classList.contains('visible')) {
+            this.closeSettings();
+        }
+        if (this.helpPanel.classList.contains('visible')) {
+            this.closeHelp();
+        }
+        if (this.textInputPanel.classList.contains('visible')) {
+            this.closeTextInput();
+        }
+        if (this.progressDetailPanel.classList.contains('visible')) {
+            this.closeProgressDetail();
+        }
     }
 };

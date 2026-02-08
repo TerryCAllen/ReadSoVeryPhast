@@ -39,6 +39,17 @@ A minimalist, no-dependency speed reading web application that displays text one
 ## How to Use
 
 ### Getting Started
+
+#### Option 1: Bookmarklet (Recommended for Web Articles)
+1. Visit [bookmarklet.html](https://terrycallen.github.io/ReadSoVeryPhast/bookmarklet.html)
+2. Drag the "📖 Speed Read This" button to your bookmarks bar
+3. When browsing any article or web page, click the bookmarklet
+4. The text is automatically extracted and loaded into SpeedRead
+5. Start reading immediately!
+
+**Smart Content Extraction**: The bookmarklet uses Mozilla's Readability technology to extract clean article content, filtering out ads, navigation, and clutter.
+
+#### Option 2: Copy and Paste
 1. Open `index.html` in your web browser
 2. Click "Load Text" and paste in any text you want to read
 3. Press the play button (center control) or spacebar to start reading

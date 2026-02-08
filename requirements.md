@@ -319,26 +319,184 @@ A simple, dependency-free HTML/JavaScript speed reading application that display
 
 ---
 
-## Recent Updates (Latest Session)
+## Recent Updates (Latest Session - Feb 7, 2026)
+
+### Progress Stats Enhancement
+- [x] **Clickable progress stats** - Click bottom-right stats to see detailed info
+- [x] **3-line compact format** on all devices:
+  ```
+  1,234/5,678
+  22.5%
+  3h 42m
+  ```
+- [x] **Progress detail dialog** with full information:
+  - "Word 1,234 of 5,678"
+  - "22.5% Complete"
+  - "3 hours, 42 min remaining"
+- [x] Hover effect on progress stats (color change)
+- [x] Click outside or × button to close dialog
+- [x] Touch-friendly on mobile
+
+### Mobile-Specific Improvements
+- [x] **Default word font size = 50px on mobile** (≤768px screens)
+- [x] Desktop remains at 80px default
+- [x] Replaced pause emoji (⏸) with ASCII (❚❚) to stay in amber theme
+- [x] Touch events (touchend + click) for all controls
+- [x] Prevented unwanted zoom with viewport meta tag
+- [x] Scrollable settings panel on iPhone
+- [x] Icons hide when panels open (no overlap)
 
 ### Settings Improvements
-- [x] Moved "Load New Text" button to top of settings panel
-- [x] Made settings panel scrollable on mobile (iPhone compatible)
-- [x] Speed changes (up/down arrows) now persist to settings
-
-### Mobile UI Fixes
-- [x] Replaced pause emoji with ASCII characters (stays amber on iPhone)
-- [x] Hide both help and hamburger icons when panels open
-- [x] Fixed icon overlap issues on small screens
-- [x] Improved panel mutual exclusivity
+- [x] "Load New Text" button moved to top of settings
+- [x] Speed changes (up/down arrows) persist automatically
+- [x] Panel mutual exclusivity (settings/help/progress detail)
+- [x] Click-outside-to-close for all panels
 
 ### Previous Updates
-- [x] Added help system with keyboard shortcuts
-- [x] Fixed hamburger/X visibility issues
-- [x] Added RSVP letter emphasis in title
-- [x] Added live demo link to README
-- [x] Fixed timing issues with sentence jumps
-- [x] Added reading progress statistics
+- [x] Help system with keyboard shortcuts and RSVP title
+- [x] Smart sentence navigation (left arrow behavior)
+- [x] Progress tracking with time estimates
+- [x] Dual themes (dark/light)
+- [x] LocalStorage persistence
+- [x] Punctuation-aware pauses
+
+---
+
+## Important Implementation Details
+
+### Touch Event Handling
+**File:** `controls.js`
+- All buttons use both `click` and `touchend` events via `addClickAndTouchListener()`
+- Prevents default on touchend with `{ passive: false }`
+- Critical for iPhone/mobile compatibility
+
+### Progress Stats System
+**Files:** `reader.js`, `controls.js`, `index.html`
+- Compact display: 3 lines always visible (bottom-right)
+- Detail dialog: Populated from `ReaderEngine.currentProgressDetails`
+- Click handler in `controls.js`: `openProgressDetail()`
+- Auto-formats time differently for compact vs detail view
+- Uses `toLocaleString()` for number formatting with commas
+
+### Mobile Font Size Detection
+**File:** `storage.js`
+```javascript
+wordFontSize: (window.innerWidth <= 768) ? 50 : 80
+```
+- Evaluated at initialization
+- Only affects new users (existing settings preserved)
+- Breakpoint matches mobile responsive CSS
+
+### Icon Visibility Management
+**File:** `controls.js`
+- Help icon (?) only visible when paused
+- Both hamburger and help hide when any panel opens
+- Prevents overlap on small screens
+- Managed by `showHelpIcon()`, `hideHelpIcon()`, etc.
+
+### Panel System
+**All panels:** Help, Settings, Text Input, Progress Detail
+- Mutual exclusivity enforced (only one open at a time)
+- Click-outside-to-close via `attachClickOutsideListeners()`
+- Both click and touch events handled
+- Checks for both panel.contains() and icon.contains() to prevent accidental closes
+
+### Pause Button Fix
+**File:** `reader.js`
+- Uses ASCII characters: `▶` (play) and `❚❚` (pause)
+- NOT emojis - emojis render blue on iOS
+- Stays in amber theme on all devices
+
+### Sentence Navigation Logic
+**File:** `reader.js` - `jumpToSentenceStart()`
+- Smart behavior: If within first 2 words of sentence, jump to PREVIOUS sentence
+- Prevents accidental restarts when user means to go back
+- Sets `justJumpedToSentence = true` for 2x pause duration
+
+### Storage Structure
+**File:** `storage.js`
+- Uses 3 localStorage keys:
+  - `speedReader_settings` - User preferences
+  - `speedReader_textContent` - Current text
+  - `speedReader_readingPosition` - Word/sentence/paragraph indices
+- Default settings include theme, fonts, colors, WPM
+- All saves merge with defaults to ensure no missing fields
+
+### Timing System
+**File:** `reader.js`
+- Base delay: `(60 / WPM) * 1000` milliseconds
+- 2x delay for: punctuation OR sentence jumps
+- `scheduleNextWord()` uses setTimeout (not setInterval)
+- Allows dynamic WPM changes during reading
+- Auto-saves position every 10 words
+
+### CSS Mobile Responsiveness
+**File:** `styles.css`
+- Breakpoint: `@media (max-width: 768px)`
+- Smaller fonts and padding on mobile
+- Full-width settings panel on mobile
+- Maintains 3-section layout (33.33vh each)
+
+### File Organization
+```
+SpeedRead/
+├── index.html          - Structure & DOM
+├── styles.css          - All styling & themes
+├── storage.js          - LocalStorage operations
+├── textProcessor.js    - Text parsing & cleaning
+├── reader.js           - Reading engine & timing
+├── controls.js         - UI controls & touch handling
+├── settings.js         - Settings management
+└── main.js             - App initialization
+```
+
+### Key Functions to Remember
+
+**ReaderEngine (reader.js):**
+- `loadText()` - Process and load text
+- `startReading()` / `pauseReading()` - Control reading state
+- `jumpToSentenceStart()` - Smart backward navigation
+- `showProgressStats()` - Calculate and display progress
+- `scheduleNextWord()` - Timing engine
+
+**ControlsManager (controls.js):**
+- `handleCenterControl()` - Play/pause toggle
+- `handleUpControl()` / `handleDownControl()` - Context-aware (speed vs scroll)
+- `handleLeftControl()` / `handleRightControl()` - Sentence navigation
+- `openProgressDetail()` - Show progress dialog
+- `addClickAndTouchListener()` - Dual event support
+
+**TextProcessor (textProcessor.js):**
+- `processText()` - Parse into paragraphs/sentences/words
+- `cleanText()` - Remove HTML/escape codes
+- `getAllWordsFlat()` - Get flat array for reading
+
+**SettingsManager (settings.js):**
+- `applyAllSettings()` - Theme, fonts, reader config
+- `loadSettingsIntoUI()` - Populate settings form
+
+### Known Quirks & Solutions
+
+1. **Auto-formatting:** After file edits, formatters may change quotes, spacing
+   - Always use final_file_content for next SEARCH block
+
+2. **toLocaleString():** Adds commas as thousands separator
+   - "1,234" not "1, 234" (no space after comma)
+
+3. **Mobile zoom prevention:** 
+   - Viewport: `maximum-scale=1.0, user-scalable=no`
+
+4. **Third-party emoji rendering:**
+   - iOS renders ⏸ as blue emoji
+   - Solution: Use ASCII/Unicode characters (❚❚)
+
+5. **Touch event passive flag:**
+   - Must be `{ passive: false }` to call preventDefault()
+
+6. **Panel z-index hierarchy:**
+   - Panels: 998
+   - Icons: 1000
+   - Settings panel: 999
 
 ---
 

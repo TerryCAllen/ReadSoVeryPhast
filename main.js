@@ -30,12 +30,73 @@ const SpeedReaderApp = {
         ControlsManager.initialize();
         console.log('Controls initialized');
 
-        // Try to load previously saved text and position
-        this.loadSavedContent();
+        // Check if text was passed via URL parameter (from bookmarklet)
+        const urlText = this.getTextFromUrlParameter();
+        if (urlText) {
+            console.log('Text received from URL parameter, loading...');
+            this.loadTextFromBookmarklet(urlText);
+        } else {
+            // Try to load previously saved text and position
+            this.loadSavedContent();
+        }
 
         // Mark as initialized
         this.isInitialized = true;
         console.log('Speed Reader application ready');
+    },
+
+    // Get text from URL parameter (from bookmarklet)
+    getTextFromUrlParameter: function() {
+        try {
+            const urlParameters = new URLSearchParams(window.location.search);
+            const encodedText = urlParameters.get('text');
+            
+            if (encodedText) {
+                const decodedText = decodeURIComponent(encodedText);
+                console.log('Found text in URL parameter, length:', decodedText.length);
+                return decodedText;
+            }
+        } catch (error) {
+            console.error('Error reading URL parameter:', error);
+        }
+        return null;
+    },
+
+    // Load text from bookmarklet
+    loadTextFromBookmarklet: function(text) {
+        if (!text || text.length === 0) {
+            console.warn('No text provided from bookmarklet');
+            this.showNoContentState();
+            return;
+        }
+
+        // Load text into reader (starting from beginning)
+        const success = ReaderEngine.loadText(text, 0);
+
+        if (success) {
+            console.log('Bookmarklet text loaded successfully');
+            
+            // Hide no text message
+            ControlsManager.hideNoTextMessage();
+            
+            // Close any open panels
+            ControlsManager.closeAllPanels();
+            
+            // Display paragraph (app starts in paused state)
+            ReaderEngine.displayParagraph();
+            
+            // Show help icon
+            ControlsManager.showHelpIcon();
+            
+            // Clear URL parameter from address bar (optional - keeps URL clean)
+            if (window.history && window.history.replaceState) {
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        } else {
+            console.error('Failed to load bookmarklet text');
+            this.showNoContentState();
+        }
     },
 
     // Load saved content from storage

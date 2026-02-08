@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeedRead Bookmarklet - Read Any Web Page Fast</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin: 30px 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        p, li {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .bookmarklet-box {
+            background: #f7fafc;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .bookmarklet-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: move;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bookmarklet-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .bookmarklet-button:active {
+            transform: translateY(0);
+        }
+
+        .drag-instruction {
+            margin-top: 20px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .step-list {
+            background: #edf2f7;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step-list ol {
+            margin-left: 20px;
+        }
+
+        .step-list li {
+            margin-bottom: 12px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .note {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #90cdf4;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .bookmarklet-button {
+                font-size: 1.1em;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 SpeedRead Bookmarklet</h1>
+            <p class="tagline">Read any web page at lightning speed</p>
+        </header>
+
+        <div class="content">
+            <h2>What is This?</h2>
+            <p>
+                The SpeedRead bookmarklet lets you speed-read any article, blog post, or web page 
+                with just one click. It extracts the main content and opens it in the SpeedRead app, 
+                ready for fast RSVP (Rapid Serial Visual Presentation) reading.
+            </p>
+
+            <div class="success">
+                <strong>✨ Smart Content Extraction:</strong> Uses Mozilla's Readability technology 
+                to extract clean text from web pages, filtering out ads, navigation, and clutter.
+            </div>
+
+            <h2>Installation</h2>
+            
+            <div class="bookmarklet-box">
+                <a href="javascript:(function(){var s=document.createElement('script');s.src='https://unpkg.com/@mozilla/readability@0.5.0/Readability.js';s.onload=function(){try{var doc=document.cloneNode(true);var reader=new Readability(doc);var article=reader.parse();if(article&&article.textContent){var text=article.textContent.trim();if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text);window.open(url,'_blank');}else{alert('No content found on this page.');}}else{var fallback=document.body.innerText||document.body.textContent;if(fallback){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(fallback);window.open(url,'_blank');}else{alert('Could not extract text from this page.');}}}catch(e){console.error('SpeedRead error:',e);alert('Error extracting text. Please try again.');}};s.onerror=function(){alert('Failed to load content extractor. Please check your internet connection.');};document.head.appendChild(s);})();" class="bookmarklet-button">📖 Speed Read This</a>
+                <p class="drag-instruction">
+                    👆 Drag this button to your bookmarks bar
+                </p>
+            </div>
+
+            <div class="step-list">
+                <h3>How to Install:</h3>
+                <ol>
+                    <li>Make sure your browser's bookmarks bar is visible
+                        <ul>
+                            <li><strong>Chrome/Edge:</strong> Press <span class="code">Ctrl+Shift+B</span> (Windows) or <span class="code">Cmd+Shift+B</span> (Mac)</li>
+                            <li><strong>Firefox:</strong> Press <span class="code">Ctrl+Shift+B</span> (Windows) or <span class="code">Cmd+Shift+B</span> (Mac)</li>
+                            <li><strong>Safari:</strong> View → Show Favorites Bar</li>
+                        </ul>
+                    </li>
+                    <li>Drag the purple "📖 Speed Read This" button above to your bookmarks bar</li>
+                    <li>That's it! The bookmarklet is installed.</li>
+                </ol>
+            </div>
+
+            <h2>How to Use</h2>
+            <div class="step-list">
+                <ol>
+                    <li>Visit any article, blog post, or web page you want to read</li>
+                    <li>Click the "📖 Speed Read This" bookmark in your bookmarks bar</li>
+                    <li>The content opens in SpeedRead, ready to read!</li>
+                    <li>Press the center play button (or spacebar) to start reading</li>
+                </ol>
+            </div>
+
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Smart Extraction</h4>
+                    <p>Uses Mozilla Readability to extract clean article content, removing ads and navigation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🚀 Instant Speed Reading</h4>
+                    <p>Text opens immediately in SpeedRead, ready for fast RSVP reading.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔒 Privacy First</h4>
+                    <p>Content goes directly from the page to your app—no third-party servers involved.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 Universal</h4>
+                    <p>Works on any website you can view in your browser.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📱 Cross-Device</h4>
+                    <p>Works on desktop browsers (mobile bookmark bars have limited support).</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⚡ No Installation</h4>
+                    <p>Just drag and drop—no extensions or apps to install.</p>
+                </div>
+            </div>
+
+            <h2>Perfect For</h2>
+            <ul>
+                <li>📰 News articles from any website</li>
+                <li>📝 Blog posts and long-form content</li>
+                <li>📚 Wikipedia articles</li>
+                <li>📖 Online documentation</li>
+                <li>🔬 Research papers and articles</li>
+                <li>🍳 Recipe sites (extracts just the recipe)</li>
+                <li>✉️ Email newsletters (when viewing in browser)</li>
+            </ul>
+
+            <div class="note">
+                <strong>⚠️ Note for Mobile Users:</strong> Mobile browsers often have limited or hidden 
+                bookmarks bar support. The bookmarklet works best on desktop browsers (Chrome, Firefox, 
+                Edge, Safari).
+            </div>
+
+            <h2>Troubleshooting</h2>
+            
+            <h3>Bookmarklet doesn't appear in toolbar</h3>
+            <p>
+                Make sure your bookmarks bar is visible. If dragging doesn't work, try right-clicking 
+                the button and selecting "Bookmark This Link" or "Add to Bookmarks."
+            </p>
+
+            <h3>No content extracted</h3>
+            <p>
+                Some pages (like PDFs or heavily JavaScript-dependent sites) may not extract well. 
+                The bookmarklet will fall back to extracting all visible text if Readability fails.
+            </p>
+
+            <h3>Page opens but no text appears</h3>
+            <p>
+                Check your browser's popup blocker settings. The bookmarklet needs to open a new tab 
+                with the SpeedRead app.
+            </p>
+
+            <h2>Alternative: Basic Version (No Readability)</h2>
+            <p>
+                If you prefer a simpler version that just extracts all visible text without the 
+                Readability processing, use this bookmarklet instead:
+            </p>
+            
+            <div class="bookmarklet-box">
+                <a href="javascript:(function(){var text=document.body.innerText||document.body.textContent;if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text.trim());window.open(url,'_blank');}else{alert('No text found on this page.');}})();" class="bookmarklet-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📖 Speed Read (Basic)</a>
+                <p class="drag-instruction">
+                    Simple version - extracts all visible text
+                </p>
+            </div>
+
+            <div class="success">
+                <strong>🎉 Ready to get started?</strong> Drag the bookmarklet above to your bookmarks 
+                bar and start speed-reading any web page with just one click!
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                Part of <a href="https://terrycallen.github.io/ReadSoVeryPhast/" target="_blank">SpeedRead</a> 
+                | <a href="https://github.com/terrycallen/ReadSoVeryPhast" target="_blank">View on GitHub</a>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                Built with ❤️ for fast readers everywhere
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
