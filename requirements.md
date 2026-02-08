@@ -500,10 +500,87 @@ SpeedRead/
 
 ---
 
+## Recent Updates (Continued)
+
+### Bookmarklet Feature (Feb 7, 2026 - Evening Session)
+- [x] **Created bookmarklet for importing web articles**
+  - Uses Readability.js to extract clean article text from any webpage
+  - Installed via bookmarklet.html page
+  - Drag-and-drop installation to bookmarks bar
+  - One-click import from any article
+
+**How it works:**
+1. User visits bookmarklet.html and drags link to bookmarks bar
+2. While reading any web article, click the bookmarklet
+3. Readability.js extracts main content (removes ads, nav, etc.)
+4. Text is stored in localStorage
+5. User switches to speed reader tab/window
+6. Speed reader auto-detects new text and loads it
+
+**Files:**
+- `bookmarklet.html` - Installation page with instructions
+- Bookmarklet code uses: Mozilla Readability.js (CDN)
+- Storage key: `speedReader_importedText`
+
+**CORS Considerations:**
+- Cannot fetch external URLs directly from the app (CORS blocked)
+- Bookmarklet runs in context of source page (no CORS issues)
+- Clever workaround: localStorage as communication channel between tabs
+
+### Text Processing Improvements (Feb 7, 2026 - Evening Session)
+- [x] **Fixed missing spaces after sentence-ending punctuation**
+  - Issue: Web articles sometimes have `primates.Since` instead of `primates. Since`
+  - Cause: HTML structure like `<p>...primates.</p><p>Since...</p>` loses spacing
+  - Solution: Regex to insert space after `.!?` when followed by capital letter
+  
+- [x] **Fixed missing spaces after punctuation + quotes**
+  - Issue: Text like `it."Praying` instead of `it." Praying`
+  - Challenge: Ambiguous quote placement without semantic understanding
+  - Solution: Multiple regex patterns for all quote types using Unicode escapes
+  
+**Implementation Details:**
+
+```javascript
+// Fix direct punctuation-to-capital: "primates.Since" -> "primates. Since"
+cleanedText = cleanedText.replace(/([.!?])([A-Z])/g, '$1 $2');
+
+// Fix punctuation + quotes + capital using Unicode escape sequences
+cleanedText = cleanedText.replace(/([.!?])(")([A-Z])/g, '$1$2 $3');        // Straight double quote U+0022
+cleanedText = cleanedText.replace(/([.!?])(')([A-Z])/g, '$1$2 $3');        // Straight single quote U+0027
+cleanedText = cleanedText.replace(/([.!?])(\u201C)([A-Z])/g, '$1$2 $3');   // Curly left double quote U+201C
+cleanedText = cleanedText.replace(/([.!?])(\u201D)([A-Z])/g, '$1$2 $3');   // Curly right double quote U+201D
+cleanedText = cleanedText.replace(/([.!?])(\u2018)([A-Z])/g, '$1$2 $3');   // Curly left single quote U+2018
+cleanedText = cleanedText.replace(/([.!?])(\u2019)([A-Z])/g, '$1$2 $3');   // Curly right single quote U+2019
+```
+
+**Why Unicode escapes?**
+- File encoding can corrupt literal curly quote characters
+- Unicode escape sequences (`\u201D`) are guaranteed to work
+- Handles both straight quotes (`"` `'`) and curly quotes (`"` `"` `'` `'`)
+
+**Known Limitation:**
+- Regex cannot determine grammatically correct quote placement
+- Example ambiguity:
+  - `They were mad."They should be"` - Space should be: `mad. "They` (before quote)
+  - `"They should be mad."They were` - Space should be: `mad." They` (after quote)
+- Current solution: Always puts space after quote (pragmatic "good enough")
+- Rationale: Fixes readability for speed reading; perfect grammar not critical at 200+ WPM
+
+**File:** `textProcessor.js` - `cleanText()` function
+
+### Testing & Debugging
+- [x] Tested bookmarklet on real news articles
+- [x] Identified quote character Unicode codes using browser console
+- [x] Verified fix works with both straight and curly quotes
+- [x] Confirmed GitHub Pages deployment (24-minute deploy cycle)
+- [x] Tested in incognito mode to avoid cache issues
+
+---
+
 ## Future Enhancements (Phase 2)
 
 Potential features for future development:
-- [ ] URL loading with text extraction
+- [x] ~~URL loading with text extraction~~ → **Implemented via bookmarklet!**
 - [ ] Additional theme options
 - [ ] Custom color picker
 - [ ] Font family selection
@@ -511,3 +588,5 @@ Potential features for future development:
 - [ ] Reading history/statistics
 - [ ] Bookmarks feature
 - [ ] Multiple saved texts
+- [ ] Smarter quote handling (ML-based or heuristic quote pairing)
+- [ ] Browser extension version (better than bookmarklet)
