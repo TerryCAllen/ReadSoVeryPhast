@@ -23,6 +23,10 @@ const TextProcessor = {
         // Normalize whitespace
         cleanedText = this.normalizeWhitespace(cleanedText);
 
+        // Fix missing spaces after sentence-ending punctuation
+        // This handles cases like "primates.Since" -> "primates. Since"
+        cleanedText = cleanedText.replace(/([.!?])([A-Z])/g, '$1 $2');
+
         // Remove excessive line breaks (more than 2 consecutive)
         cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
 
