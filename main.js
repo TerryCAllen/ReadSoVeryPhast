@@ -37,14 +37,21 @@ const SpeedReaderApp = {
         ControlsManager.initialize();
         console.log('Controls initialized');
 
-        // Check if text was passed via URL parameter (from bookmarklet)
-        const urlText = this.getTextFromUrlParameter();
-        if (urlText) {
-            console.log('Text received from URL parameter, loading...');
-            this.loadTextFromBookmarklet(urlText);
+        // Check if text was imported via localStorage (from bookmarklet) - prioritize this
+        const importedText = this.getTextFromLocalStorage();
+        if (importedText) {
+            console.log('Text received from localStorage import, loading...');
+            this.loadTextFromBookmarklet(importedText);
         } else {
-            // Try to load previously saved content from library
-            this.loadSavedContent();
+            // Check if text was passed via URL parameter (legacy bookmarklet support)
+            const urlText = this.getTextFromUrlParameter();
+            if (urlText) {
+                console.log('Text received from URL parameter, loading...');
+                this.loadTextFromBookmarklet(urlText);
+            } else {
+                // Try to load previously saved content from library
+                this.loadSavedContent();
+            }
         }
 
         // Mark as initialized
@@ -52,7 +59,26 @@ const SpeedReaderApp = {
         console.log('Read So Very Phast application ready');
     },
 
-    // Get text from URL parameter (from bookmarklet)
+    // Get text from localStorage (from bookmarklet) - new method for large content
+    getTextFromLocalStorage: function() {
+        try {
+            const importedText = localStorage.getItem('speedReader_importedText');
+            
+            if (importedText) {
+                console.log('Found text in localStorage, length:', importedText.length);
+                
+                // Clear the imported text from localStorage after reading
+                localStorage.removeItem('speedReader_importedText');
+                
+                return importedText;
+            }
+        } catch (error) {
+            console.error('Error reading imported text from localStorage:', error);
+        }
+        return null;
+    },
+
+    // Get text from URL parameter (from bookmarklet) - legacy support
     getTextFromUrlParameter: function() {
         try {
             const urlParameters = new URLSearchParams(window.location.search);
