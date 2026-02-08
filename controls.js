@@ -8,6 +8,8 @@ const ControlsManager = {
     controlLeft: null,
     controlRight: null,
     controlCenter: null,
+    controlPageUp: null,
+    controlPageDown: null,
     
     // Settings elements
     settingsIcon: null,
@@ -73,6 +75,8 @@ const ControlsManager = {
         this.controlLeft = document.getElementById('controlLeft');
         this.controlRight = document.getElementById('controlRight');
         this.controlCenter = document.getElementById('controlCenter');
+        this.controlPageUp = document.getElementById('controlPageUp');
+        this.controlPageDown = document.getElementById('controlPageDown');
         
         // Settings
         this.settingsIcon = document.getElementById('settingsIcon');
@@ -108,8 +112,8 @@ const ControlsManager = {
         this.saveToLibraryButton = document.getElementById('saveToLibraryButton');
         this.documentTitleInput = document.getElementById('documentTitleInput');
         
-        // Progress detail
-        this.progressStats = document.getElementById('progressStats');
+        // Progress detail (now using combined stats)
+        this.progressStats = document.getElementById('combinedStats');
         this.progressDetailPanel = document.getElementById('progressDetailPanel');
         this.closeProgressDetailButton = document.getElementById('closeProgressDetail');
         
@@ -133,6 +137,8 @@ const ControlsManager = {
         this.addClickAndTouchListener(this.controlDown, () => this.handleDownControl());
         this.addClickAndTouchListener(this.controlLeft, () => this.handleLeftControl());
         this.addClickAndTouchListener(this.controlRight, () => this.handleRightControl());
+        this.addClickAndTouchListener(this.controlPageUp, () => this.handlePageUpControl());
+        this.addClickAndTouchListener(this.controlPageDown, () => this.handlePageDownControl());
 
         // Settings
         this.addClickAndTouchListener(this.settingsIcon, () => this.openSettings());
@@ -241,6 +247,14 @@ const ControlsManager = {
                     event.preventDefault();
                     this.handleRightControl();
                     break;
+                case 'PageUp':
+                    event.preventDefault();
+                    this.handlePageUpControl();
+                    break;
+                case 'PageDown':
+                    event.preventDefault();
+                    this.handlePageDownControl();
+                    break;
             }
         });
     },
@@ -313,6 +327,20 @@ const ControlsManager = {
                 top: 100,
                 behavior: 'smooth'
             });
+        }
+    },
+
+    // Handle page up control (paused only)
+    handlePageUpControl: function() {
+        if (ReaderEngine.isPaused) {
+            ReaderEngine.navigateToPreviousParagraph();
+        }
+    },
+
+    // Handle page down control (paused only)
+    handlePageDownControl: function() {
+        if (ReaderEngine.isPaused) {
+            ReaderEngine.navigateToNextParagraph();
         }
     },
 
@@ -553,10 +581,11 @@ const ControlsManager = {
             return;
         }
 
-        // Populate detail panel with current progress info
+        // Populate detail panel with current progress info (including WPM)
         document.getElementById('progressDetailLine1').textContent = ReaderEngine.currentProgressDetails.wordText;
         document.getElementById('progressDetailLine2').textContent = ReaderEngine.currentProgressDetails.percentText;
         document.getElementById('progressDetailLine3').textContent = ReaderEngine.currentProgressDetails.timeText;
+        document.getElementById('progressDetailLine4').textContent = ReaderEngine.currentProgressDetails.wpmText;
 
         // Show panel
         this.progressDetailPanel.classList.remove('hidden');

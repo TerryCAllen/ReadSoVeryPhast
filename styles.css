@@ -825,37 +825,36 @@ body {
     grid-row: 3;
 }
 
-/* Speed Display */
-.speed-display {
+/* Page Up/Down Controls (paused only) */
+.control-page-up {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.control-page-down {
+    grid-column: 3;
+    grid-row: 3;
+}
+
+/* Combined Stats Display (replaces separate speed and progress) */
+.combined-stats {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    font-size: 18px;
-    color: var(--color-text-dim);
-    padding: 5px 10px;
-    background-color: var(--color-bg);
-}
-
-/* Progress Stats Display */
-.progress-stats {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     font-size: 11px;
     color: var(--color-text-dim);
     padding: 4px 6px;
     background-color: var(--color-bg);
-    text-align: right;
     line-height: 1.2;
     cursor: pointer;
     transition: color 0.2s;
 }
 
-.progress-stats:hover {
+.combined-stats:hover {
     color: var(--color-text);
 }
 
-.progress-stats.hidden {
+.combined-stats.hidden {
     display: none;
 }
 

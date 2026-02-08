@@ -21,12 +21,13 @@ const ReaderEngine = {
     wordDisplayElement: null,
     paragraphDisplayElement: null,
     paragraphContentElement: null,
-    speedDisplayElement: null,
     playPauseIconElement: null,
-    progressStatsElement: null,
-    progressLine1Element: null,
-    progressLine2Element: null,
-    progressLine3Element: null,
+    combinedStatsElement: null,
+    combinedLine1Element: null,
+    combinedLine2Element: null,
+    combinedLine3Element: null,
+    controlPageUpElement: null,
+    controlPageDownElement: null,
 
     // Initialize the reading engine
     initialize: function(settings) {
@@ -37,14 +38,15 @@ const ReaderEngine = {
         this.wordDisplayElement = document.getElementById('wordDisplay');
         this.paragraphDisplayElement = document.getElementById('paragraphDisplay');
         this.paragraphContentElement = document.getElementById('paragraphContent');
-        this.speedDisplayElement = document.getElementById('speedDisplay');
         this.playPauseIconElement = document.getElementById('playPauseIcon');
-        this.progressStatsElement = document.getElementById('progressStats');
-        this.progressLine1Element = document.getElementById('progressLine1');
-        this.progressLine2Element = document.getElementById('progressLine2');
-        this.progressLine3Element = document.getElementById('progressLine3');
+        this.combinedStatsElement = document.getElementById('combinedStats');
+        this.combinedLine1Element = document.getElementById('combinedLine1');
+        this.combinedLine2Element = document.getElementById('combinedLine2');
+        this.combinedLine3Element = document.getElementById('combinedLine3');
+        this.controlPageUpElement = document.getElementById('controlPageUp');
+        this.controlPageDownElement = document.getElementById('controlPageDown');
         
-        this.updateSpeedDisplay();
+        this.updateCombinedStats();
     },
 
     // Load text into the reading engine
@@ -420,6 +422,60 @@ const ReaderEngine = {
         this.skipToNextSentence();
     },
 
+    // Navigate to previous paragraph (paused mode only)
+    navigateToPreviousParagraph: function() {
+        if (!this.isPaused || !this.processedText || !this.allWords) {
+            return;
+        }
+
+        const currentWord = this.allWords[this.currentWordIndex];
+        const currentParagraphIndex = currentWord.paragraphIndex;
+
+        // Go to previous paragraph if it exists
+        if (currentParagraphIndex > 0) {
+            const previousParagraphIndex = currentParagraphIndex - 1;
+            
+            // Find the first word of the previous paragraph
+            for (let index = 0; index < this.allWords.length; index++) {
+                if (this.allWords[index].paragraphIndex === previousParagraphIndex) {
+                    this.currentWordIndex = index;
+                    break;
+                }
+            }
+
+            this.displayCurrentWord();
+            this.displayParagraph();
+            this.saveCurrentPosition();
+        }
+    },
+
+    // Navigate to next paragraph (paused mode only)
+    navigateToNextParagraph: function() {
+        if (!this.isPaused || !this.processedText || !this.allWords) {
+            return;
+        }
+
+        const currentWord = this.allWords[this.currentWordIndex];
+        const currentParagraphIndex = currentWord.paragraphIndex;
+
+        // Go to next paragraph if it exists
+        if (currentParagraphIndex < this.processedText.paragraphs.length - 1) {
+            const nextParagraphIndex = currentParagraphIndex + 1;
+            
+            // Find the first word of the next paragraph
+            for (let index = this.currentWordIndex; index < this.allWords.length; index++) {
+                if (this.allWords[index].paragraphIndex === nextParagraphIndex) {
+                    this.currentWordIndex = index;
+                    break;
+                }
+            }
+
+            this.displayCurrentWord();
+            this.displayParagraph();
+            this.saveCurrentPosition();
+        }
+    },
+
     // Increase reading speed
     increaseSpeed: function() {
         this.wordsPerMinute += this.wordsPerMinuteIncrement;
@@ -434,11 +490,26 @@ const ReaderEngine = {
         this.saveSettings();
     },
 
-    // Update speed display
-    updateSpeedDisplay: function() {
-        if (this.speedDisplayElement) {
-            this.speedDisplayElement.textContent = `${this.wordsPerMinute} WPM`;
+    // Update combined stats display (replaces updateSpeedDisplay)
+    updateCombinedStats: function() {
+        if (!this.combinedStatsElement) {
+            return;
         }
+        
+        // Update WPM
+        if (this.combinedLine1Element) {
+            this.combinedLine1Element.textContent = `${this.wordsPerMinute} WPM`;
+        }
+        
+        // Update progress if we have loaded text
+        if (this.allWords && this.allWords.length > 0) {
+            this.showProgressStats();
+        }
+    },
+
+    // Keep for backward compatibility
+    updateSpeedDisplay: function() {
+        this.updateCombinedStats();
     },
 
     // Save current reading position
@@ -494,7 +565,7 @@ const ReaderEngine = {
 
     // Show progress stats (only when paused)
     showProgressStats: function() {
-        if (!this.progressStatsElement || !this.allWords || this.allWords.length === 0) {
+        if (!this.combinedStatsElement || !this.allWords || this.allWords.length === 0) {
             return;
         }
 
@@ -527,10 +598,6 @@ const ReaderEngine = {
         const formattedCurrent = currentWordNumber.toLocaleString();
         const formattedTotal = totalWords.toLocaleString();
 
-        // Compact 3-line format for all devices
-        this.progressLine1Element.textContent = `${formattedCurrent}/${formattedTotal}`;
-        this.progressLine2Element.textContent = `${percentComplete}%`;
-        
         // Shorten time for display
         let shortTime = timeRemainingText;
         if (minutesRemaining < 1) {
@@ -546,10 +613,19 @@ const ReaderEngine = {
                 shortTime += ` ${minutes}m`;
             }
         }
-        this.progressLine3Element.textContent = shortTime;
+
+        // Update combined stats display (3 lines: WPM, progress, time)
+        if (this.combinedLine1Element) {
+            this.combinedLine1Element.textContent = `${this.wordsPerMinute} WPM`;
+        }
+        if (this.combinedLine2Element) {
+            this.combinedLine2Element.textContent = `Word ${formattedCurrent} of ${formattedTotal} (${percentComplete}%)`;
+        }
+        if (this.combinedLine3Element) {
+            this.combinedLine3Element.textContent = `Est. Time: ${shortTime}`;
+        }
         
-        // Store detailed info for the detail panel
-        // Format time for detail view (shorter format)
+        // Store detailed info for the detail panel (with WPM added)
         let detailTime = timeRemainingText;
         if (minutesRemaining >= 60) {
             const hours = Math.floor(minutesRemaining / 60);
@@ -563,17 +639,34 @@ const ReaderEngine = {
         this.currentProgressDetails = {
             wordText: `Word ${formattedCurrent} of ${formattedTotal}`,
             percentText: `${percentComplete}% Complete`,
-            timeText: `${detailTime} remaining`
+            timeText: `${detailTime} remaining`,
+            wpmText: `${this.wordsPerMinute} Words Per Minute`
         };
 
-        // Show the stats
-        this.progressStatsElement.classList.remove('hidden');
+        // Show the combined stats and page controls
+        this.combinedStatsElement.classList.remove('hidden');
+        
+        // Show page up/down controls (paused only)
+        if (this.controlPageUpElement) {
+            this.controlPageUpElement.classList.remove('hidden');
+        }
+        if (this.controlPageDownElement) {
+            this.controlPageDownElement.classList.remove('hidden');
+        }
     },
 
     // Hide progress stats (when reading)
     hideProgressStats: function() {
-        if (this.progressStatsElement) {
-            this.progressStatsElement.classList.add('hidden');
+        if (this.combinedStatsElement) {
+            this.combinedStatsElement.classList.add('hidden');
+        }
+        
+        // Hide page up/down controls (reading mode)
+        if (this.controlPageUpElement) {
+            this.controlPageUpElement.classList.add('hidden');
+        }
+        if (this.controlPageDownElement) {
+            this.controlPageDownElement.classList.add('hidden');
         }
     },
 
