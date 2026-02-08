@@ -70,6 +70,30 @@ body {
     background-color: var(--color-text);
 }
 
+/* Save Icon - Top Left (next to help icon) */
+.save-icon {
+    position: fixed;
+    top: 15px;
+    left: 75px;
+    font-size: 26px;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    transition: color 0.2s, background-color 0.2s, opacity 0.3s, visibility 0.3s;
+}
+
+.save-icon:hover {
+    color: var(--color-bg);
+    background-color: var(--color-text);
+}
+
 /* Settings Icon (Hamburger Menu) */
 .settings-icon {
     position: fixed;
@@ -193,8 +217,173 @@ body {
     color: var(--color-bg);
 }
 
-.load-new-text-button {
+.load-new-text-button,
+.my-library-button {
     margin-top: 10px;
+}
+
+.my-library-button {
+    margin-bottom: 15px;
+    background-color: var(--color-text);
+    color: var(--color-bg);
+}
+
+.my-library-button:hover {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* Library Panel */
+.library-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    z-index: 998;
+    display: none;
+}
+
+.library-panel.visible {
+    display: block;
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.library-header h2 {
+    font-size: 24px;
+    color: var(--color-text);
+}
+
+.library-content {
+    padding: 20px;
+    max-height: calc(80vh - 140px);
+    overflow-y: auto;
+}
+
+.library-list {
+    margin-bottom: 20px;
+}
+
+.library-item {
+    padding: 15px;
+    border: 1px solid var(--color-text-dim);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.library-item:hover {
+    background-color: rgba(255, 176, 0, 0.1);
+    border-color: var(--color-text);
+}
+
+.library-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.library-item-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.library-item-meta {
+    font-size: 12px;
+    color: var(--color-text-dim);
+}
+
+.library-item-delete {
+    background: none;
+    border: none;
+    color: var(--color-text-dim);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 10px;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.library-item-delete:hover {
+    color: var(--color-highlight);
+}
+
+.library-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-dim);
+}
+
+.library-empty p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.storage-usage {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-text-dim);
+    text-align: center;
+}
+
+.storage-usage p {
+    font-size: 12px;
+    color: var(--color-text-dim);
+}
+
+/* Save to Library Panel */
+.save-to-library-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-text);
+    z-index: 998;
+    display: none;
+}
+
+.save-to-library-panel.visible {
+    display: block;
+}
+
+.save-to-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-text-dim);
+}
+
+.save-to-library-header h2 {
+    font-size: 24px;
+    color: var(--color-text);
+}
+
+.save-to-library-content {
+    padding: 20px;
 }
 
 /* Help Panel */

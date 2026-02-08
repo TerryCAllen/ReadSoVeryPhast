@@ -12,7 +12,7 @@ const SpeedReaderApp = {
             return;
         }
 
-        console.log('Initializing Speed Reader application...');
+        console.log('Initializing Read So Very Phast application...');
 
         // Load settings first
         const settings = SettingsManager.initialize();
@@ -21,6 +21,13 @@ const SpeedReaderApp = {
         // Apply all settings (theme, fonts, etc.)
         SettingsManager.applyAllSettings();
         console.log('Settings applied');
+
+        // Initialize library manager
+        LibraryManager.initialize();
+        console.log('Library initialized');
+
+        // Migrate old storage format if needed
+        LibraryManager.migrateOldStorage();
 
         // Initialize reader engine with settings
         ReaderEngine.initialize(settings);
@@ -36,13 +43,13 @@ const SpeedReaderApp = {
             console.log('Text received from URL parameter, loading...');
             this.loadTextFromBookmarklet(urlText);
         } else {
-            // Try to load previously saved text and position
+            // Try to load previously saved content from library
             this.loadSavedContent();
         }
 
         // Mark as initialized
         this.isInitialized = true;
-        console.log('Speed Reader application ready');
+        console.log('Read So Very Phast application ready');
     },
 
     // Get text from URL parameter (from bookmarklet)
@@ -70,17 +77,23 @@ const SpeedReaderApp = {
             return;
         }
 
+        // Save as temporary text (unsaved until user clicks save button)
+        LibraryManager.saveTempText(text, { wordIndex: 0, sentenceIndex: 0, paragraphIndex: 0 });
+
         // Load text into reader (starting from beginning)
         const success = ReaderEngine.loadText(text, 0);
 
         if (success) {
-            console.log('Bookmarklet text loaded successfully');
+            console.log('Bookmarklet text loaded successfully (unsaved)');
             
             // Hide no text message
             ControlsManager.hideNoTextMessage();
             
             // Close any open panels
             ControlsManager.closeAllPanels();
+            
+            // Show save icon (this is unsaved text)
+            ControlsManager.showSaveIcon();
             
             // Display paragraph (app starts in paused state)
             ReaderEngine.displayParagraph();
@@ -99,39 +112,71 @@ const SpeedReaderApp = {
         }
     },
 
-    // Load saved content from storage
+    // Load saved content from library
     loadSavedContent: function() {
-        const savedText = StorageManager.loadTextContent();
-        
-        if (savedText && savedText.length > 0) {
-            console.log('Found saved text, loading...');
+        // Check if there's an active document in the library
+        if (LibraryManager.activeDocumentId) {
+            const activeDocument = LibraryManager.getDocument(LibraryManager.activeDocumentId);
             
-            // Load saved reading position
-            const savedPosition = StorageManager.loadReadingPosition();
-            const startWordIndex = savedPosition.wordIndex || 0;
-
-            // Load text into reader
-            const success = ReaderEngine.loadText(savedText, startWordIndex);
-
+            if (activeDocument) {
+                console.log('Loading active document from library:', activeDocument.title);
+                
+                const success = ReaderEngine.loadText(activeDocument.textContent, activeDocument.position.wordIndex);
+                
+                if (success) {
+                    console.log('Active document loaded successfully');
+                    
+                    // Hide no text message
+                    ControlsManager.hideNoTextMessage();
+                    
+                    // Hide save icon (this is a saved document)
+                    ControlsManager.hideSaveIcon();
+                    
+                    // Display paragraph (app starts in paused state)
+                    ReaderEngine.displayParagraph();
+                    
+                    // Show help icon
+                    ControlsManager.showHelpIcon();
+                    
+                    return;
+                }
+            }
+        }
+        
+        // Check if there are any documents in the library
+        const library = LibraryManager.getLibrarySortedByRecent();
+        
+        if (library.length > 0) {
+            // Load most recent document
+            const mostRecentDocument = library[0];
+            console.log('Loading most recent document:', mostRecentDocument.title);
+            
+            LibraryManager.saveActiveDocumentId(mostRecentDocument.id);
+            
+            const success = ReaderEngine.loadText(mostRecentDocument.textContent, mostRecentDocument.position.wordIndex);
+            
             if (success) {
-                console.log('Saved text loaded successfully. Position:', startWordIndex);
+                console.log('Most recent document loaded successfully');
                 
                 // Hide no text message
                 ControlsManager.hideNoTextMessage();
                 
+                // Hide save icon (this is a saved document)
+                ControlsManager.hideSaveIcon();
+                
                 // Display paragraph (app starts in paused state)
                 ReaderEngine.displayParagraph();
                 
-                // Show help icon (app starts paused)
+                // Show help icon
                 ControlsManager.showHelpIcon();
-            } else {
-                console.error('Failed to load saved text');
-                this.showNoContentState();
+                
+                return;
             }
-        } else {
-            console.log('No saved text found');
-            this.showNoContentState();
         }
+        
+        // No documents found
+        console.log('No documents in library');
+        this.showNoContentState();
     },
 
     // Show no content state
@@ -214,6 +259,7 @@ window.addEventListener('beforeunload', function() {
 window.SpeedReaderApp = SpeedReaderApp;
 window.ReaderEngine = ReaderEngine;
 window.StorageManager = StorageManager;
+window.LibraryManager = LibraryManager;
 window.TextProcessor = TextProcessor;
 window.ControlsManager = ControlsManager;
 window.SettingsManager = SettingsManager;

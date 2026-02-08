@@ -441,11 +441,23 @@ const ReaderEngine = {
     saveCurrentPosition: function() {
         const currentWord = this.allWords[this.currentWordIndex];
         
-        StorageManager.saveReadingPosition({
+        const position = {
             wordIndex: this.currentWordIndex,
             sentenceIndex: currentWord.sentenceIndex,
             paragraphIndex: currentWord.paragraphIndex
-        });
+        };
+        
+        // Check if we have an active document in the library
+        if (LibraryManager.activeDocumentId) {
+            // Save to library document
+            LibraryManager.updateDocumentPosition(LibraryManager.activeDocumentId, position);
+        } else if (LibraryManager.hasUnsavedText) {
+            // Save to temporary storage (unsaved bookmarklet text)
+            LibraryManager.updateTempPosition(position);
+        } else {
+            // Fallback to legacy storage (for backward compatibility)
+            StorageManager.saveReadingPosition(position);
+        }
     },
 
     // Save settings

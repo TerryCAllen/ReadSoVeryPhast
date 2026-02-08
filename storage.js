@@ -1,12 +1,14 @@
 // Storage Module - Handles all LocalStorage operations
 // Manages persistence of settings, text content, and reading position
+// Note: Text content and position are now managed by LibraryManager
+// This module maintains legacy functions for backward compatibility
 
 const StorageManager = {
     // Storage keys
     KEYS: {
         SETTINGS: 'speedReader_settings',
-        TEXT_CONTENT: 'speedReader_textContent',
-        READING_POSITION: 'speedReader_readingPosition'
+        TEXT_CONTENT: 'speedReader_textContent',  // Legacy - migrated to library
+        READING_POSITION: 'speedReader_readingPosition'  // Legacy - migrated to library
     },
 
     // Default settings
@@ -47,8 +49,12 @@ const StorageManager = {
         }
     },
 
-    // Save text content to LocalStorage
+    // Legacy functions - kept for backward compatibility
+    // Text content and positions are now managed by LibraryManager
+    
+    // Save text content to LocalStorage (legacy)
     saveTextContent: function(textContent) {
+        console.warn('saveTextContent is deprecated - use LibraryManager instead');
         try {
             localStorage.setItem(this.KEYS.TEXT_CONTENT, textContent);
             return true;
@@ -58,7 +64,7 @@ const StorageManager = {
         }
     },
 
-    // Load text content from LocalStorage
+    // Load text content from LocalStorage (legacy)
     loadTextContent: function() {
         try {
             const textContent = localStorage.getItem(this.KEYS.TEXT_CONTENT);
@@ -69,8 +75,9 @@ const StorageManager = {
         }
     },
 
-    // Save reading position to LocalStorage
+    // Save reading position to LocalStorage (legacy)
     saveReadingPosition: function(position) {
+        console.warn('saveReadingPosition is deprecated - use LibraryManager instead');
         try {
             const positionData = {
                 wordIndex: position.wordIndex || 0,
@@ -86,7 +93,7 @@ const StorageManager = {
         }
     },
 
-    // Load reading position from LocalStorage
+    // Load reading position from LocalStorage (legacy)
     loadReadingPosition: function() {
         try {
             const storedPosition = localStorage.getItem(this.KEYS.READING_POSITION);

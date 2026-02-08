@@ -19,6 +19,20 @@ const ControlsManager = {
     helpPanel: null,
     closeHelpButton: null,
     
+    // Save icon element
+    saveIcon: null,
+    
+    // Library elements
+    libraryPanel: null,
+    closeLibraryButton: null,
+    myLibraryButton: null,
+    
+    // Save to library elements
+    saveToLibraryPanel: null,
+    closeSaveToLibraryButton: null,
+    saveToLibraryButton: null,
+    documentTitleInput: null,
+    
     // Progress detail elements
     progressStats: null,
     progressDetailPanel: null,
@@ -57,6 +71,20 @@ const ControlsManager = {
         this.helpPanel = document.getElementById('helpPanel');
         this.closeHelpButton = document.getElementById('closeHelp');
         
+        // Save icon
+        this.saveIcon = document.getElementById('saveIcon');
+        
+        // Library
+        this.libraryPanel = document.getElementById('libraryPanel');
+        this.closeLibraryButton = document.getElementById('closeLibrary');
+        this.myLibraryButton = document.getElementById('myLibraryButton');
+        
+        // Save to library
+        this.saveToLibraryPanel = document.getElementById('saveToLibraryPanel');
+        this.closeSaveToLibraryButton = document.getElementById('closeSaveToLibrary');
+        this.saveToLibraryButton = document.getElementById('saveToLibraryButton');
+        this.documentTitleInput = document.getElementById('documentTitleInput');
+        
         // Progress detail
         this.progressStats = document.getElementById('progressStats');
         this.progressDetailPanel = document.getElementById('progressDetailPanel');
@@ -87,6 +115,17 @@ const ControlsManager = {
         // Help
         this.addClickAndTouchListener(this.helpIcon, () => this.openHelp());
         this.addClickAndTouchListener(this.closeHelpButton, () => this.closeHelp());
+        
+        // Save icon
+        this.addClickAndTouchListener(this.saveIcon, () => this.openSaveToLibrary());
+        
+        // Library
+        this.addClickAndTouchListener(this.myLibraryButton, () => this.openLibrary());
+        this.addClickAndTouchListener(this.closeLibraryButton, () => this.closeLibrary());
+        
+        // Save to library
+        this.addClickAndTouchListener(this.closeSaveToLibraryButton, () => this.closeSaveToLibrary());
+        this.addClickAndTouchListener(this.saveToLibraryButton, () => this.handleSaveToLibrary());
 
         // Progress detail
         this.addClickAndTouchListener(this.progressStats, () => this.openProgressDetail());
@@ -290,33 +329,41 @@ const ControlsManager = {
             return;
         }
 
-        // Save text to storage
-        StorageManager.saveTextContent(rawText);
+        // Create new document from textbox (auto-save enabled)
+        const document = LibraryManager.createDocument(rawText, 'textbox');
         
-        // Reset reading position
-        StorageManager.saveReadingPosition({
-            wordIndex: 0,
-            sentenceIndex: 0,
-            paragraphIndex: 0
-        });
-
-        // Load text into reader
-        const success = ReaderEngine.loadText(rawText, 0);
+        // Add to library
+        const result = LibraryManager.addDocument(document);
         
-        if (success) {
-            // Hide no text message
-            this.noTextMessage.classList.add('hidden');
+        if (result.success) {
+            // Set as active document
+            LibraryManager.saveActiveDocumentId(document.id);
             
-            // Close text input panel
-            this.closeTextInput();
+            // Load text into reader
+            const success = ReaderEngine.loadText(rawText, 0);
             
-            // Show paragraph display (paused state)
-            ReaderEngine.displayParagraph();
-            
-            // Show help icon (text loaded in paused state)
-            this.showHelpIcon();
+            if (success) {
+                // Hide no text message
+                this.noTextMessage.classList.add('hidden');
+                
+                // Close text input panel
+                this.closeTextInput();
+                
+                // Hide save icon (this is a saved document)
+                this.hideSaveIcon();
+                
+                // Show paragraph display (paused state)
+                ReaderEngine.displayParagraph();
+                
+                // Show help icon (text loaded in paused state)
+                this.showHelpIcon();
+            } else {
+                alert('Failed to load text. Please try again.');
+            }
+        } else if (result.error === 'storage_full') {
+            alert('Storage is full! Please delete some documents from your library before adding new ones.');
         } else {
-            alert('Failed to load text. Please try again.');
+            alert('Failed to save text to library.');
         }
     },
 
@@ -484,7 +531,7 @@ const ControlsManager = {
         this.progressDetailPanel.classList.add('hidden');
     },
 
-    // Close all panels (settings, help, text input, progress detail)
+    // Close all panels (settings, help, text input, progress detail, library, save to library)
     closeAllPanels: function() {
         if (this.settingsPanel.classList.contains('visible')) {
             this.closeSettings();
@@ -497,6 +544,264 @@ const ControlsManager = {
         }
         if (this.progressDetailPanel.classList.contains('visible')) {
             this.closeProgressDetail();
+        }
+        if (this.libraryPanel.classList.contains('visible')) {
+            this.closeLibrary();
+        }
+        if (this.saveToLibraryPanel.classList.contains('visible')) {
+            this.closeSaveToLibrary();
+        }
+    },
+
+    // Show save icon (when unsaved text is loaded)
+    showSaveIcon: function() {
+        if (this.saveIcon) {
+            this.saveIcon.classList.remove('hidden');
+        }
+    },
+
+    // Hide save icon (when no unsaved text)
+    hideSaveIcon: function() {
+        if (this.saveIcon) {
+            this.saveIcon.classList.add('hidden');
+        }
+    },
+
+    // Open library panel
+    openLibrary: function() {
+        // Close settings if open
+        if (this.settingsPanel.classList.contains('visible')) {
+            this.closeSettings();
+        }
+
+        // Populate library list
+        this.populateLibraryList();
+
+        // Show panel
+        this.libraryPanel.classList.remove('hidden');
+        this.libraryPanel.classList.add('visible');
+    },
+
+    // Close library panel
+    closeLibrary: function() {
+        this.libraryPanel.classList.remove('visible');
+        this.libraryPanel.classList.add('hidden');
+    },
+
+    // Populate library list with documents
+    populateLibraryList: function() {
+        const libraryList = document.getElementById('libraryList');
+        const libraryEmpty = document.getElementById('libraryEmpty');
+        const storagePercent = document.getElementById('storagePercent');
+        const storageDocCount = document.getElementById('storageDocCount');
+
+        // Get sorted library (most recent first)
+        const documents = LibraryManager.getLibrarySortedByRecent();
+
+        // Clear current list
+        libraryList.innerHTML = '';
+
+        // Show empty message if no documents
+        if (documents.length === 0) {
+            libraryEmpty.classList.remove('hidden');
+        } else {
+            libraryEmpty.classList.add('hidden');
+
+            // Create list items for each document
+            documents.forEach(document => {
+                const listItem = this.createLibraryListItem(document);
+                libraryList.appendChild(listItem);
+            });
+        }
+
+        // Update storage usage
+        const usage = LibraryManager.getStorageUsage();
+        if (usage) {
+            storagePercent.textContent = Math.round(usage.usagePercent);
+            storageDocCount.textContent = usage.documentCount;
+        }
+    },
+
+    // Create library list item element
+    createLibraryListItem: function(document) {
+        const listItem = document.createElement('div');
+        listItem.className = 'library-item';
+        listItem.dataset.documentId = document.id;
+
+        // Calculate progress percentage
+        const totalWords = document.textContent.split(/\s+/).length;
+        const progressPercent = totalWords > 0 ? Math.round((document.position.wordIndex / totalWords) * 100) : 0;
+
+        // Format last read time
+        const lastReadDate = new Date(document.lastRead);
+        const now = new Date();
+        const diffMs = now - lastReadDate;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        let timeAgo;
+        if (diffMins < 1) {
+            timeAgo = 'Just now';
+        } else if (diffMins < 60) {
+            timeAgo = `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+        } else if (diffHours < 24) {
+            timeAgo = `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        } else {
+            timeAgo = `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        }
+
+        listItem.innerHTML = `
+            <div class="library-item-content">
+                <div class="library-item-title">${this.escapeHtml(document.title)}</div>
+                <div class="library-item-meta">${progressPercent}% complete • ${timeAgo}</div>
+            </div>
+            <button class="library-item-delete" data-document-id="${document.id}">×</button>
+        `;
+
+        // Add click handler for switching to document
+        const contentArea = listItem.querySelector('.library-item-content');
+        this.addClickAndTouchListener(contentArea, () => {
+            this.handleSwitchToDocument(document.id);
+        });
+
+        // Add click handler for delete button
+        const deleteButton = listItem.querySelector('.library-item-delete');
+        this.addClickAndTouchListener(deleteButton, (event) => {
+            event.stopPropagation();
+            this.handleDeleteDocument(document.id);
+        });
+
+        return listItem;
+    },
+
+    // Escape HTML to prevent XSS
+    escapeHtml: function(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    // Handle switching to a document
+    handleSwitchToDocument: function(documentId) {
+        const document = LibraryManager.getDocument(documentId);
+        
+        if (!document) {
+            alert('Document not found.');
+            return;
+        }
+
+        // Set as active document
+        LibraryManager.saveActiveDocumentId(documentId);
+
+        // Load document into reader
+        const success = ReaderEngine.loadText(document.textContent, document.position.wordIndex);
+
+        if (success) {
+            // Close library panel
+            this.closeLibrary();
+
+            // Hide save icon (this is a saved document)
+            this.hideSaveIcon();
+
+            // Show paragraph display
+            ReaderEngine.displayParagraph();
+
+            // Show help icon
+            this.showHelpIcon();
+        } else {
+            alert('Failed to load document.');
+        }
+    },
+
+    // Handle deleting a document
+    handleDeleteDocument: function(documentId) {
+        const document = LibraryManager.getDocument(documentId);
+        
+        if (!document) {
+            return;
+        }
+
+        const confirmed = confirm(`Delete "${document.title}"?`);
+        
+        if (!confirmed) {
+            return;
+        }
+
+        const success = LibraryManager.deleteDocument(documentId);
+
+        if (success) {
+            // Refresh library list
+            this.populateLibraryList();
+
+            // If this was the active document, we need to clear the reader
+            if (LibraryManager.activeDocumentId === documentId) {
+                // Check if there are other documents to switch to
+                const remainingDocuments = LibraryManager.getLibrarySortedByRecent();
+                
+                if (remainingDocuments.length > 0) {
+                    // Switch to most recent document
+                    this.handleSwitchToDocument(remainingDocuments[0].id);
+                } else {
+                    // No documents left, show empty state
+                    this.closeLibrary();
+                    this.showNoTextMessage();
+                }
+            }
+        } else {
+            alert('Failed to delete document.');
+        }
+    },
+
+    // Open save to library panel
+    openSaveToLibrary: function() {
+        // Generate title from current temp text
+        const tempData = LibraryManager.loadTempText();
+        const suggestedTitle = LibraryManager.generateTitle(tempData.textContent);
+
+        // Pre-populate title input
+        this.documentTitleInput.value = suggestedTitle;
+
+        // Show panel
+        this.saveToLibraryPanel.classList.remove('hidden');
+        this.saveToLibraryPanel.classList.add('visible');
+
+        // Focus on title input and select all
+        setTimeout(() => {
+            this.documentTitleInput.focus();
+            this.documentTitleInput.select();
+        }, 100);
+    },
+
+    // Close save to library panel
+    closeSaveToLibrary: function() {
+        this.saveToLibraryPanel.classList.remove('visible');
+        this.saveToLibraryPanel.classList.add('hidden');
+    },
+
+    // Handle save to library action
+    handleSaveToLibrary: function() {
+        const title = this.documentTitleInput.value.trim();
+
+        // Use title if provided, otherwise use auto-generated
+        const result = LibraryManager.saveCurrentTempTextToLibrary(title || null);
+
+        if (result.success) {
+            // Close save panel
+            this.closeSaveToLibrary();
+
+            // Hide save icon
+            this.hideSaveIcon();
+
+            // Show success message
+            alert('Saved to library!');
+        } else if (result.error === 'storage_full') {
+            alert('Storage is full! Please delete some documents from your library before saving new ones.');
+        } else if (result.error === 'no_temp_text') {
+            alert('No text to save.');
+            this.closeSaveToLibrary();
+        } else {
+            alert('Failed to save to library.');
         }
     }
 };

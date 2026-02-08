@@ -10,8 +10,46 @@
     <!-- Help Icon (top-left, only when paused) -->
     <div id="helpIcon" class="help-icon hidden">?</div>
 
+    <!-- Save Icon (top-left, next to help, only when unsaved text) -->
+    <div id="saveIcon" class="save-icon hidden" title="Save to Library">💾</div>
+
     <!-- Settings Menu Icon -->
     <div id="settingsIcon" class="settings-icon">☰</div>
+
+    <!-- Library Panel (hidden by default) -->
+    <div id="libraryPanel" class="library-panel hidden">
+        <div class="library-header">
+            <h2>My Reading Library</h2>
+            <button id="closeLibrary" class="close-button">×</button>
+        </div>
+        <div class="library-content">
+            <div id="libraryList" class="library-list">
+                <!-- Library items will be dynamically inserted here -->
+            </div>
+            <div id="libraryEmpty" class="library-empty hidden">
+                <p>Your library is empty.</p>
+                <p>Load text or use the bookmarklet to add documents.</p>
+            </div>
+            <div id="storageUsage" class="storage-usage">
+                <p>Storage: <span id="storagePercent">0</span>% used (<span id="storageDocCount">0</span> documents)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save to Library Panel (hidden by default) -->
+    <div id="saveToLibraryPanel" class="save-to-library-panel hidden">
+        <div class="save-to-library-header">
+            <h2>Save to Library</h2>
+            <button id="closeSaveToLibrary" class="close-button">×</button>
+        </div>
+        <div class="save-to-library-content">
+            <div class="setting-group">
+                <label for="documentTitleInput">Document Title</label>
+                <input type="text" id="documentTitleInput" placeholder="Enter title or use auto-generated...">
+            </div>
+            <button id="saveToLibraryButton" class="save-button">Save to Library</button>
+        </div>
+    </div>
 
     <!-- Settings Panel (hidden by default) -->
     <div id="settingsPanel" class="settings-panel hidden">
@@ -20,6 +58,7 @@
             <button id="closeSettings" class="close-button">×</button>
         </div>
         <div class="settings-content">
+            <button id="myLibraryButton" class="my-library-button">My Library</button>
             <button id="loadNewTextButton" class="load-new-text-button">Load New Text</button>
             
             <div class="setting-group">
@@ -167,6 +206,7 @@
 
     <!-- JavaScript Modules -->
     <script src="storage.js"></script>
+    <script src="library.js"></script>
     <script src="textProcessor.js"></script>
     <script src="reader.js"></script>
     <script src="controls.js"></script>

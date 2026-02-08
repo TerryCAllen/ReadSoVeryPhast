@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpeedRead Bookmarklet - Read Any Web Page Fast</title>
+    <title>Read So Very Phast Bookmarklet - Speed Read Any Web Page</title>
     <style>
         * {
             margin: 0;
@@ -200,15 +200,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>📖 SpeedRead Bookmarklet</h1>
-            <p class="tagline">Read any web page at lightning speed</p>
+            <h1>📖 Read So Very Phast Bookmarklet</h1>
+            <p class="tagline">Speed read any web page at lightning speed</p>
         </header>
 
         <div class="content">
             <h2>What is This?</h2>
             <p>
-                The SpeedRead bookmarklet lets you speed-read any article, blog post, or web page 
-                with just one click. It extracts the main content and opens it in the SpeedRead app, 
+                The Read So Very Phast bookmarklet lets you speed-read any article, blog post, or web page 
+                with just one click. It extracts the main content and opens it in Read So Very Phast, 
                 ready for fast RSVP (Rapid Serial Visual Presentation) reading.
             </p>
 
@@ -220,7 +220,7 @@
             <h2>Installation</h2>
             
             <div class="bookmarklet-box">
-                <a href="javascript:(function(){var s=document.createElement('script');s.src='https://unpkg.com/@mozilla/readability@0.5.0/Readability.js';s.onload=function(){try{var doc=document.cloneNode(true);var reader=new Readability(doc);var article=reader.parse();if(article&&article.textContent){var text=article.textContent.trim();if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text);window.open(url,'_blank');}else{alert('No content found on this page.');}}else{var fallback=document.body.innerText||document.body.textContent;if(fallback){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(fallback);window.open(url,'_blank');}else{alert('Could not extract text from this page.');}}}catch(e){console.error('SpeedRead error:',e);alert('Error extracting text. Please try again.');}};s.onerror=function(){alert('Failed to load content extractor. Please check your internet connection.');};document.head.appendChild(s);})();" class="bookmarklet-button">📖 Speed Read This</a>
+                <a href="javascript:(function(){var s=document.createElement('script');s.src='https://unpkg.com/@mozilla/readability@0.5.0/Readability.js';s.onload=function(){try{var doc=document.cloneNode(true);var reader=new Readability(doc);var article=reader.parse();if(article&&article.textContent){var text=article.textContent.trim();if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text);window.open(url,'_blank');}else{alert('No content found on this page.');}}else{var fallback=document.body.innerText||document.body.textContent;if(fallback){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(fallback);window.open(url,'_blank');}else{alert('Could not extract text from this page.');}}}catch(e){console.error('Read So Very Phast error:',e);alert('Error extracting text. Please try again.');}};s.onerror=function(){alert('Failed to load content extractor. Please check your internet connection.');};document.head.appendChild(s);})();" class="bookmarklet-button">📖 Read So Very Phast</a>
                 <p class="drag-instruction">
                     👆 Drag this button to your bookmarks bar
                 </p>
@@ -236,7 +236,7 @@
                             <li><strong>Safari:</strong> View → Show Favorites Bar</li>
                         </ul>
                     </li>
-                    <li>Drag the purple "📖 Speed Read This" button above to your bookmarks bar</li>
+                    <li>Drag the purple "📖 Read So Very Phast" button above to your bookmarks bar</li>
                     <li>That's it! The bookmarklet is installed.</li>
                 </ol>
             </div>
@@ -245,8 +245,8 @@
             <div class="step-list">
                 <ol>
                     <li>Visit any article, blog post, or web page you want to read</li>
-                    <li>Click the "📖 Speed Read This" bookmark in your bookmarks bar</li>
-                    <li>The content opens in SpeedRead, ready to read!</li>
+                    <li>Click the "📖 Read So Very Phast" bookmark in your bookmarks bar</li>
+                    <li>The content opens in Read So Very Phast, ready to read!</li>
                     <li>Press the center play button (or spacebar) to start reading</li>
                 </ol>
             </div>
@@ -259,7 +259,7 @@
                 </div>
                 <div class="feature-card">
                     <h4>🚀 Instant Speed Reading</h4>
-                    <p>Text opens immediately in SpeedRead, ready for fast RSVP reading.</p>
+                    <p>Text opens immediately in Read So Very Phast, ready for fast RSVP reading.</p>
                 </div>
                 <div class="feature-card">
                     <h4>🔒 Privacy First</h4>
@@ -323,7 +323,7 @@
             </p>
             
             <div class="bookmarklet-box">
-                <a href="javascript:(function(){var text=document.body.innerText||document.body.textContent;if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text.trim());window.open(url,'_blank');}else{alert('No text found on this page.');}})();" class="bookmarklet-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📖 Speed Read (Basic)</a>
+                <a href="javascript:(function(){var text=document.body.innerText||document.body.textContent;if(text){var url='https://terrycallen.github.io/ReadSoVeryPhast/?text='+encodeURIComponent(text.trim());window.open(url,'_blank');}else{alert('No text found on this page.');}})();" class="bookmarklet-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📖 Read So Very Phast (Basic)</a>
                 <p class="drag-instruction">
                     Simple version - extracts all visible text
                 </p>
@@ -337,7 +337,7 @@
 
         <footer>
             <p>
-                Part of <a href="https://terrycallen.github.io/ReadSoVeryPhast/" target="_blank">SpeedRead</a> 
+                Part of <a href="https://terrycallen.github.io/ReadSoVeryPhast/" target="_blank">Read So Very Phast</a> 
                 | <a href="https://github.com/terrycallen/ReadSoVeryPhast" target="_blank">View on GitHub</a>
             </p>
             <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
