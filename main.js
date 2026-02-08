@@ -37,20 +37,27 @@ const SpeedReaderApp = {
         ControlsManager.initialize();
         console.log('Controls initialized');
 
-        // Check if text was imported via localStorage (from bookmarklet) - prioritize this
-        const importedText = this.getTextFromLocalStorage();
-        if (importedText) {
-            console.log('Text received from localStorage import, loading...');
-            this.loadTextFromBookmarklet(importedText);
+        // Check if text was imported via URL hash (from bookmarklet) - prioritize this
+        const hashText = this.getTextFromUrlHash();
+        if (hashText) {
+            console.log('Text received from URL hash, loading...');
+            this.loadTextFromBookmarklet(hashText);
         } else {
-            // Check if text was passed via URL parameter (legacy bookmarklet support)
-            const urlText = this.getTextFromUrlParameter();
-            if (urlText) {
-                console.log('Text received from URL parameter, loading...');
-                this.loadTextFromBookmarklet(urlText);
+            // Check if text was imported via localStorage (legacy support)
+            const importedText = this.getTextFromLocalStorage();
+            if (importedText) {
+                console.log('Text received from localStorage import, loading...');
+                this.loadTextFromBookmarklet(importedText);
             } else {
-                // Try to load previously saved content from library
-                this.loadSavedContent();
+                // Check if text was passed via URL parameter (legacy bookmarklet support)
+                const urlText = this.getTextFromUrlParameter();
+                if (urlText) {
+                    console.log('Text received from URL parameter, loading...');
+                    this.loadTextFromBookmarklet(urlText);
+                } else {
+                    // Try to load previously saved content from library
+                    this.loadSavedContent();
+                }
             }
         }
 
@@ -59,7 +66,33 @@ const SpeedReaderApp = {
         console.log('Read So Very Phast application ready');
     },
 
-    // Get text from localStorage (from bookmarklet) - new method for large content
+    // Get text from URL hash (from bookmarklet) - method for large content
+    getTextFromUrlHash: function() {
+        try {
+            const hash = window.location.hash;
+            
+            if (hash && hash.startsWith('#text=')) {
+                const encodedText = hash.substring(6); // Remove '#text='
+                
+                // Decode the base64-encoded text
+                const decodedText = decodeURIComponent(atob(encodedText));
+                
+                console.log('Found text in URL hash, length:', decodedText.length);
+                
+                // Clear the hash from the URL
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                
+                return decodedText;
+            }
+        } catch (error) {
+            console.error('Error reading text from URL hash:', error);
+        }
+        return null;
+    },
+
+    // Get text from localStorage (from bookmarklet) - legacy support
     getTextFromLocalStorage: function() {
         try {
             const importedText = localStorage.getItem('speedReader_importedText');

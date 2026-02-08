@@ -218,14 +218,14 @@
             </div>
 
             <div class="success">
-                <strong>📚 Handles Large Content:</strong> Uses localStorage to transfer content, 
-                so it works with long articles and even full books from Project Gutenberg—no URL size limits!
+                <strong>📚 Handles Large Content:</strong> Uses URL hash encoding to transfer content cross-domain, 
+                supporting articles and books up to ~2MB in size!
             </div>
 
             <h2>Installation</h2>
             
             <div class="bookmarklet-box">
-                <a href="javascript:(function(){var s=document.createElement('script');s.src='https://unpkg.com/@mozilla/readability@0.5.0/Readability.js';s.onload=function(){try{var doc=document.cloneNode(true);var reader=new Readability(doc);var article=reader.parse();if(article&&article.textContent){var text=article.textContent.trim();if(text){try{localStorage.setItem('speedReader_importedText',text);window.open('https://terrycallen.github.io/ReadSoVeryPhast/','_blank');}catch(e){alert('Content too large for storage. Try a shorter article.');}}else{alert('No content found on this page.');}}else{var fallback=document.body.innerText||document.body.textContent;if(fallback){try{localStorage.setItem('speedReader_importedText',fallback.trim());window.open('https://terrycallen.github.io/ReadSoVeryPhast/','_blank');}catch(e){alert('Content too large for storage. Try a shorter article.');}}else{alert('Could not extract text from this page.');}}}catch(e){console.error('Read So Very Phast error:',e);alert('Error extracting text. Please try again.');}};s.onerror=function(){alert('Failed to load content extractor. Please check your internet connection.');};document.head.appendChild(s);})();" class="bookmarklet-button">📖 Read So Very Phast</a>
+                <a href="javascript:(function(){var s=document.createElement('script');s.src='https://unpkg.com/@mozilla/readability@0.5.0/Readability.js';s.onload=function(){try{var doc=document.cloneNode(true);var reader=new Readability(doc);var article=reader.parse();if(article&&article.textContent){var text=article.textContent.trim();if(text){try{var encoded=btoa(encodeURIComponent(text));window.open('https://terrycallen.github.io/ReadSoVeryPhast/#text='+encoded,'_blank');}catch(e){alert('Content too large for URL. Try a shorter article or paste text directly into the app.');}}else{alert('No content found on this page.');}}else{var fallback=document.body.innerText||document.body.textContent;if(fallback){try{var encoded=btoa(encodeURIComponent(fallback.trim()));window.open('https://terrycallen.github.io/ReadSoVeryPhast/#text='+encoded,'_blank');}catch(e){alert('Content too large for URL. Try a shorter article or paste text directly into the app.');}}else{alert('Could not extract text from this page.');}}}catch(e){console.error('Read So Very Phast error:',e);alert('Error extracting text. Please try again.');}};s.onerror=function(){alert('Failed to load content extractor. Please check your internet connection.');};document.head.appendChild(s);})();" class="bookmarklet-button">📖 Read So Very Phast</a>
                 <p class="drag-instruction">
                     👆 Drag this button to your bookmarks bar
                 </p>
@@ -322,9 +322,9 @@
                 with the SpeedRead app.
             </p>
 
-            <h3>"Content too large for storage" error</h3>
+            <h3>"Content too large for URL" error</h3>
             <p>
-                Very rarely, extremely large documents may exceed browser localStorage limits (typically 5-10MB). 
+                Very rarely, extremely large documents may exceed browser URL limits (typically ~2MB). 
                 If this happens, try saving the content to a text file and pasting it directly into the app instead.
             </p>
 
@@ -335,7 +335,7 @@
             </p>
             
             <div class="bookmarklet-box">
-                <a href="javascript:(function(){var text=document.body.innerText||document.body.textContent;if(text){try{localStorage.setItem('speedReader_importedText',text.trim());window.open('https://terrycallen.github.io/ReadSoVeryPhast/','_blank');}catch(e){alert('Content too large for storage. Try a shorter page.');}}else{alert('No text found on this page.');}})();" class="bookmarklet-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📖 Read So Very Phast (Basic)</a>
+                <a href="javascript:(function(){var text=document.body.innerText||document.body.textContent;if(text){try{var encoded=btoa(encodeURIComponent(text.trim()));window.open('https://terrycallen.github.io/ReadSoVeryPhast/#text='+encoded,'_blank');}catch(e){alert('Content too large for URL. Try a shorter page or paste text directly into the app.');}}else{alert('No text found on this page.');}})();" class="bookmarklet-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📖 Read So Very Phast (Basic)</a>
                 <p class="drag-instruction">
                     Simple version - extracts all visible text
                 </p>
