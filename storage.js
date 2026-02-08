@@ -14,7 +14,7 @@ const StorageManager = {
         wordsPerMinute: 200,
         wordsPerMinuteIncrement: 5,
         theme: 'dark',
-        wordFontSize: 80,
+        wordFontSize: (window.innerWidth <= 768) ? 50 : 80,  // 50 on mobile, 80 on desktop
         paragraphFontSize: 16,
         fontColor: '#FFB000',
         backgroundColor: '#000000'
