@@ -836,6 +836,9 @@ const ControlsManager = {
 
             // Hide save icon
             this.hideSaveIcon();
+            
+            // Update document title to the saved title
+            this.updateDocumentTitle(result.document.title);
 
             // Show success message
             alert('Saved to library!');

@@ -248,13 +248,25 @@ body {
 
 .my-library-button {
     margin-bottom: 15px;
-    background-color: var(--color-text);
-    color: var(--color-bg);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    border: 2px solid var(--color-text);
+    position: relative;
+    padding-left: 45px;
+}
+
+.my-library-button::before {
+    content: '📚';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
 }
 
 .my-library-button:hover {
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: var(--color-text);
+    color: var(--color-bg);
 }
 
 /* Library Panel */

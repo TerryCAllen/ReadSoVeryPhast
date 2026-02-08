@@ -143,10 +143,15 @@ const SettingsManager = {
 
     // Handle load new text button click
     handleLoadNewText: function() {
-        const confirmed = confirm('Loading new text will clear your current reading position. Continue?');
+        // Only show warning if there's unsaved temp text
+        const hasUnsavedText = LibraryManager.hasUnsavedText;
         
-        if (!confirmed) {
-            return;
+        if (hasUnsavedText) {
+            const confirmed = confirm('Loading new text will clear your current unsaved reading position. Continue?');
+            
+            if (!confirmed) {
+                return;
+            }
         }
 
         // Clear current text and position

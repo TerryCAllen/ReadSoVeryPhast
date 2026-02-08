@@ -2,7 +2,7 @@
 // Ties all modules together and manages application lifecycle
 
 // App version
-const APP_VERSION = "2026.02.08-16:17 UTC";
+const APP_VERSION = "2026.02.08-16:33 UTC";
 
 const SpeedReaderApp = {
     // Application state
@@ -200,6 +200,9 @@ const SpeedReaderApp = {
                     // Hide save icon (this is a saved document)
                     ControlsManager.hideSaveIcon();
                     
+                    // Update document title
+                    ControlsManager.updateDocumentTitle(activeDocument.title);
+                    
                     // Display paragraph (app starts in paused state)
                     ReaderEngine.displayParagraph();
                     
@@ -232,6 +235,9 @@ const SpeedReaderApp = {
                 
                 // Hide save icon (this is a saved document)
                 ControlsManager.hideSaveIcon();
+                
+                // Update document title
+                ControlsManager.updateDocumentTitle(mostRecentDocument.title);
                 
                 // Display paragraph (app starts in paused state)
                 ReaderEngine.displayParagraph();
