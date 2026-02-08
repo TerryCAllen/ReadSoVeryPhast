@@ -203,8 +203,9 @@ const SpeedReaderApp = {
                     // Display paragraph (app starts in paused state)
                     ReaderEngine.displayParagraph();
                     
-                    // Show help icon
+                    // Show help and search icons
                     ControlsManager.showHelpIcon();
+                    ControlsManager.showSearchIcon();
                     
                     return;
                 }
@@ -235,8 +236,9 @@ const SpeedReaderApp = {
                 // Display paragraph (app starts in paused state)
                 ReaderEngine.displayParagraph();
                 
-                // Show help icon
+                // Show help and search icons
                 ControlsManager.showHelpIcon();
+                ControlsManager.showSearchIcon();
                 
                 return;
             }
