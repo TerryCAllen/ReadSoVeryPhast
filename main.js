@@ -1,6 +1,9 @@
 // Main Module - Application initialization and coordination
 // Ties all modules together and manages application lifecycle
 
+// App version
+const APP_VERSION = "1.3.0";
+
 const SpeedReaderApp = {
     // Application state
     isInitialized: false,
@@ -59,6 +62,12 @@ const SpeedReaderApp = {
                     this.loadSavedContent();
                 }
             }
+        }
+
+        // Set version number in help panel
+        const versionElement = document.getElementById('appVersion');
+        if (versionElement) {
+            versionElement.textContent = APP_VERSION;
         }
 
         // Mark as initialized

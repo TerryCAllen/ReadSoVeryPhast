@@ -210,7 +210,7 @@ const ReaderEngine = {
         let paragraphHtml = '';
         
         currentParagraph.sentences.forEach(sentence => {
-            const isCurrentSentence = (sentence.sentenceIndex === currentWord.sentenceIndex);
+            const isCurrentSentence = (sentence.globalSentenceIndex === currentWord.sentenceIndex);
             const sentenceClass = isCurrentSentence ? 'sentence current' : 'sentence';
             
             paragraphHtml += `<span class="${sentenceClass}">${sentence.text}</span> `;
@@ -588,7 +588,7 @@ const ReaderEngine = {
             paragraph.sentences.forEach(sentence => {
                 sentences.push({
                     text: sentence.text,
-                    sentenceIndex: sentence.sentenceIndex
+                    sentenceIndex: sentence.globalSentenceIndex  // Use globally unique index
                 });
             });
         });

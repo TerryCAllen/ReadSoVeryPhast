@@ -230,6 +230,14 @@ const TextProcessor = {
 
         const paragraphs = this.parseParagraphs(cleanedText);
         
+        // Assign globally unique sentence indices across all paragraphs
+        let globalSentenceIndex = 0;
+        paragraphs.forEach(paragraph => {
+            paragraph.sentences.forEach(sentence => {
+                sentence.globalSentenceIndex = globalSentenceIndex++;
+            });
+        });
+        
         // Calculate totals
         let totalWords = 0;
         let totalSentences = 0;
@@ -262,7 +270,7 @@ const TextProcessor = {
                     allWords.push({
                         ...word,
                         globalWordIndex: globalWordIndex,
-                        sentenceIndex: sentence.sentenceIndex,
+                        sentenceIndex: sentence.globalSentenceIndex,  // Use globally unique index
                         paragraphIndex: paragraph.paragraphIndex,
                         sentenceText: sentence.text,
                         paragraphText: paragraph.text
